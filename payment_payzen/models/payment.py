@@ -10,9 +10,11 @@
 import base64
 from datetime import datetime
 from hashlib import sha1, sha256
+from dateutil.relativedelta import *
 import hmac
 import logging
 import math
+import re
 from os import path
 
 from pkg_resources import parse_version
@@ -94,6 +96,8 @@ class AcquirerPayzen(models.Model):
     # Compatibility betwen Odoo 13 and previous versions.
     payzen_odoo13 = True if parse_version(release.version) >= parse_version('13') else False
 
+    is_for_payments_dd = fields.Boolean(string='Use for Payments Dropdown')
+
     if payzen_odoo13:
         image = fields.Char()
         environment = fields.Char()
@@ -135,6 +139,7 @@ class AcquirerPayzen(models.Model):
 
     def _get_payment_config(self, amount):
         if self.provider == 'payzenmulti':
+            invoice = self.env['account.invoice']
             if (self.payzen_multi_first):
                 first = int(float(self.payzen_multi_first) / 100 * int(amount))
             else:
@@ -184,7 +189,7 @@ class AcquirerPayzen(models.Model):
 
         # Enable redirection?
         self.payzen_redirect = True if str(self.payzen_redirect_enabled) == '1' else False
-
+        reference = str(values.get('reference'))
         tx_values = dict() # Values to sign in unicode.
         tx_values.update({
             'vads_site_id': self.payzen_site_id,
@@ -198,7 +203,7 @@ class AcquirerPayzen(models.Model):
             'vads_payment_config': self._get_payment_config(amount),
             'vads_version': constants.PAYZEN_PARAMS.get('GATEWAY_VERSION'),
             'vads_url_return': urlparse.urljoin(base_url, PayzenController._return_url),
-            'vads_order_id': str(values.get('reference')),
+            'vads_order_id': re.sub('[^a-zA-Z0-9\-]', '', reference),
             'vads_contrib': constants.PAYZEN_PARAMS.get('CMS_IDENTIFIER') + u'_' + constants.PAYZEN_PARAMS.get('PLUGIN_VERSION') + u'/' + release.version,
 
             'vads_language': self.payzen_language or '',
@@ -232,6 +237,12 @@ class AcquirerPayzen(models.Model):
             'vads_ship_to_phone_num': values.get('partner_phone') and values.get('partner_phone')[0:31] or '',
         })
 
+        so = self.env['sale.order'].search([('name', '=', reference)])
+        if so and so.payment_acquier_id:
+            tx_values = self._alter_with_so_data(tx_values, so, amount)
+            if so.partner_id.customer_nbr:
+                tx_values.update({'vads_cust_id': str(so.partner_id.customer_nbr)})
+
         if self.payzen_redirect:
             tx_values.update({
                 'vads_redirect_success_timeout': self.payzen_redirect_success_timeout or '',
@@ -259,6 +270,37 @@ class AcquirerPayzen(models.Model):
 
     def payzenmulti_get_form_action_url(self):
         return self.payzen_gateway_url
+
+    def _alter_with_so_data(self, tx_values, so, amount):
+        if so.first_payment_amount and not so.second_payment_date:
+            tx_values.update({
+                'vads_payment_config': u'MULTI:first=' + str(int(so.first_payment_amount*100)) + u';count=' + self.payzen_multi_count + u';period=' + self.payzen_multi_period
+            })
+        if so.first_payment_amount and so.second_payment_date:
+            first, monthly, last = self._get_payments_so(so, amount)
+
+            config = u'MULTI_EXT:'
+            fdate = so.date_order.split(' ')[0].split('-')
+            secdate = so.second_payment_date.split('-')
+            for x in range(int(self.payzen_multi_count)):
+                ndate = datetime(int(secdate[0]), int(secdate[1]), int(secdate[2])) + relativedelta(days=+((x - 1)*int(self.payzen_multi_period)))
+                if x==0:
+                    config += str(datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])).strftime('%Y%m%d')) + u'=' + str(int(first)) + ';'
+                elif x == (int(self.payzen_multi_count) - 1):
+                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(last))
+                else:
+                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(monthly)) + ';'
+            so.monthly_payment = monthly
+            tx_values.update({
+                'vads_payment_config': config
+            })
+        return tx_values
+
+    def _get_payments_so(self, so, amount):
+        first = int(so.first_payment_amount * 100)
+        monthly = int((amount - first) / (int(self.payzen_multi_count) - 1))
+        last = int(amount - first - ((int(self.payzen_multi_count) - 2) * monthly))
+        return first, monthly, last
 
 class TransactionPayzen(models.Model):
     _inherit = 'payment.transaction'
@@ -355,6 +397,8 @@ class TransactionPayzen(models.Model):
             values.update({
                 'state': 'done',
             })
+            if self.sale_order_id:
+                self.sale_order_id.message_post(body='Paiement effectué avec succès')
 
             self.write(values)
 
@@ -363,6 +407,8 @@ class TransactionPayzen(models.Model):
             values.update({
                 'state': 'pending',
             })
+            if self.sale_order_id:
+                self.sale_order_id.message_post(body='Paiement en attente')
 
             self.write(values)
 
@@ -372,6 +418,8 @@ class TransactionPayzen(models.Model):
                 'state_message': 'Payment for transaction #%s is cancelled (%s).' % (self.reference, data.get('vads_result')),
                 'state': 'cancel',
             })
+            if self.sale_order_id:
+                self.sale_order_id.message_post(body='Paiement annulé')
 
             return False
         else:
@@ -380,6 +428,8 @@ class TransactionPayzen(models.Model):
 
             error_msg = 'PayZen payment error, transaction status: {}, authorization result: {}.'.format(status, auth_result)
             _logger.info(error_msg)
+            if self.sale_order_id:
+                self.sale_order_id.message_post(body='Erreur durant le paiement : %s' % (data.get('vads_result')))
 
             values.update({
                 'state_message': 'Payment for transaction #%s is refused (%s).' % (self.reference, data.get('vads_result')),

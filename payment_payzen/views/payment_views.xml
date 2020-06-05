@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 
+<!--
 # Copyright © Lyra Network.
 # This file is part of PayZen plugin for Odoo. See COPYING.md for license details.
 #
@@ -18,6 +18,7 @@
                 <xpath expr="//group[@name='acquirer']" position="after">
                     <div attrs="{'invisible': [('provider','not in',('payzen','payzenmulti'))]}">
                         <group name="payzen_gateway_access" string="PAYMENT GATEWAY ACCESS">
+                            <field name="is_for_payments_dd"/>
                             <field name="payzen_site_id" autocomplete="off" attrs="{'required': [('provider','in',('payzen','payzenmulti'))]}" />
                             <field name="payzen_key_test" autocomplete="off" attrs="{'required': [('provider','in',('payzen','payzenmulti'))]}" />
                             <field name="payzen_key_prod" autocomplete="off" attrs="{'required': [('provider','in',('payzen','payzenmulti'))]}" />
@@ -68,7 +69,20 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="acquirer_list_custo" model="ir.ui.view">
+            <field name="name">payment.acquirer.list.custo</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='provider']" position="after">
+                    <field name="payzen_multi_count" string="Number of payments"/>
+                </xpath>
+            </field>
+        </record>
     </data>
+
+
 
     <function model="payment.acquirer" name="multi_add">
         <value>/views/payment_views_multi.xml</value>

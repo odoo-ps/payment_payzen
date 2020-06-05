@@ -15,7 +15,7 @@ import werkzeug
 
 from odoo import http, release
 from odoo.http import request
-
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 _logger = logging.getLogger(__name__)
 
@@ -46,8 +46,23 @@ class PayzenController(http.Controller):
 
     @http.route('/payment/payzen/ipn', type='http', auth='none', methods=['POST'], csrf=False)
     def payzen_ipn(self, **post):
-        _logger.info('PayZen: entering IPN form_feedback with post data %s', pprint.pformat(post))
+        _logger.info('PayZen: entering IPN form_feedback with post data %s', pprint.pformat(post)) 
 
         # Check payment result and create transaction.
         result = request.env['payment.transaction'].sudo().form_feedback(post, 'payzen')
         return 'Accepted payment, order has been updated.' if result else 'Payment failure, order has been cancelled.'
+
+
+class WebsiteSale(WebsiteSale):
+    def _get_shop_payment_values(self, order, **kwargs):
+        ret = super(WebsiteSale, self)._get_shop_payment_values(order, **kwargs)
+        for r in ret:
+            if len(r['form_acquirers']):
+                for i in r['form_acquirers']:
+                    if order.payment_acquire_id and i.id != order.payment_acquire_id.id:
+                        r['form_acquirers'].remove(i)
+            if len(r['s2s_acquirers']):
+                for i in r['s2s_acquirers']:
+                    if order.payment_acquire_id and i.id != order.payment_acquire_id.id:
+                        r['s2s_acquirers'].remove(i)
+        return ret
