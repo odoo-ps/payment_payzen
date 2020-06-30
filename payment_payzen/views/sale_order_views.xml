@@ -55,7 +55,7 @@ from ${object.company_id.name}.
         First payment of
         ${format_amount(object.first_payment_amount, object.currency_id)}<br/>
         On ${format_date(object.date_order)}<br/>
-        Next payments of ${format_amount((object.amount_total - object.first_payment_amount) / (object.payzen_get_months - 1), object.currency_id)}
+        Next payments of ${format_amount((object.amount_total - object.first_payment_amount) / ((object.payzen_get_months - 1) if object.payzen_get_months > 1 else 1), object.currency_id)}
         % if object.second_payment_date:
             from ${object.second_payment_date}<br/>
         % endif
