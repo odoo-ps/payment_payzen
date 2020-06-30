@@ -50,8 +50,10 @@ from ${object.company_id.name}.
 
 <p>
 % if object.payment_acquier_id:
-    Payable in ${object.payment_acquier_id.payzen_multi_count} times<br/>
-    %if object.first_payment_amount
+    % if object.payment_acquier_id.payzen_multi_count:
+        Payable in ${object.payment_acquier_id.payzen_multi_count} times<br/>
+    % endif
+    % if object.first_payment_amount
         First payment of
         ${format_amount(object.first_payment_amount, object.currency_id)}<br/>
         On ${format_date(object.date_order)}<br/>
