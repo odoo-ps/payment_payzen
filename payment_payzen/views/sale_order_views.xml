@@ -60,7 +60,7 @@ from ${object.company_id.name}.
             from ${object.second_payment_date}<br/>
         % endif
     % else
-        Payments of ${format_amount(object.amount_total / object.payzen_get_months, object.currency_id)}
+        Payments of ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months > 0 else 1), object.currency_id)}
     % endif
 % endif
 </p>
