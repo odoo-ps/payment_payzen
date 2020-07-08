@@ -278,7 +278,7 @@ class AcquirerPayzen(models.Model):
         first, monthly, last = self._get_payments_so(so, amount)
         config = u'MULTI_EXT:'
         fdate = so.date_order.split(' ')[0].split('-')
-        secdate = so.second_payment_date if so.second_payment_date else so.date_order + relativedelta(days=+int(self.payzen_multi_period))
+        secdate = so.second_payment_date if so.second_payment_date else datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])) + relativedelta(days=+int(self.payzen_multi_period))
         secdate = secdate.split(' ')[0].split('-')
         for x in range(int(self.payzen_multi_count)):
             ndate = datetime(int(secdate[0]), int(secdate[1]), int(secdate[2])) + relativedelta(days=+((x - 1)*int(self.payzen_multi_period)))
