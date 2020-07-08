@@ -60,6 +60,8 @@ auprès de ${object.company_id.name}.
         % endif
     % else
         Avec des paiements à hauteur de ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months &gt; 0 else 1), object.currency_id)}
+        Premier paiment de ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months &gt; 0 else 1), object.currency_id)} 
+        le ${format_date(object.date_order)}<br>
     % endif
 % endif
 </p>
