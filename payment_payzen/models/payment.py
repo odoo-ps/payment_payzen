@@ -274,7 +274,7 @@ class AcquirerPayzen(models.Model):
 
     def _alter_with_so_data(self, tx_values, so, amount):
         if not so.first_payment_amount:
-            so.first_payment_amount = amount / self.payzen_multi_count / 100
+            so.first_payment_amount = amount / int(self.payzen_multi_count) / 100
         first, monthly, last = self._get_payments_so(so, amount)
         config = u'MULTI_EXT:'
         fdate = so.date_order.split(' ')[0].split('-')
