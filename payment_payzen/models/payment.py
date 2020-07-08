@@ -41,6 +41,7 @@ _logger = logging.getLogger(__name__)
 class AcquirerPayzen(models.Model):
     _inherit = 'payment.acquirer'
 
+    payzen_name = fields.Char()
     def _get_notify_url(self):
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
         return urlparse.urljoin(base_url, PayzenController._notify_url)
@@ -272,28 +273,25 @@ class AcquirerPayzen(models.Model):
         return self.payzen_gateway_url
 
     def _alter_with_so_data(self, tx_values, so, amount):
-        if so.first_payment_amount and not so.second_payment_date:
-            tx_values.update({
-                'vads_payment_config': u'MULTI:first=' + str(int(so.first_payment_amount*100)) + u';count=' + self.payzen_multi_count + u';period=' + self.payzen_multi_period
-            })
-        if so.first_payment_amount and so.second_payment_date:
-            first, monthly, last = self._get_payments_so(so, amount)
-
-            config = u'MULTI_EXT:'
-            fdate = so.date_order.split(' ')[0].split('-')
-            secdate = so.second_payment_date.split('-')
-            for x in range(int(self.payzen_multi_count)):
-                ndate = datetime(int(secdate[0]), int(secdate[1]), int(secdate[2])) + relativedelta(days=+((x - 1)*int(self.payzen_multi_period)))
-                if x==0:
-                    config += str(datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])).strftime('%Y%m%d')) + u'=' + str(int(first)) + ';'
-                elif x == (int(self.payzen_multi_count) - 1):
-                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(last))
-                else:
-                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(monthly)) + ';'
-            so.monthly_payment = monthly
-            tx_values.update({
-                'vads_payment_config': config
-            })
+        if not so.first_payment_amount:
+            so.first_payment_amount = amount / self.payzen_multi_count / 100
+        first, monthly, last = self._get_payments_so(so, amount)
+        config = u'MULTI_EXT:'
+        fdate = so.date_order.split(' ')[0].split('-')
+        secdate = so.second_payment_date if so.second_payment_date else so.date_order + relativedelta(days=+int(self.payzen_multi_period))
+        secdate = secdate.split(' ')[0].split('-')
+        for x in range(int(self.payzen_multi_count)):
+            ndate = datetime(int(secdate[0]), int(secdate[1]), int(secdate[2])) + relativedelta(days=+((x - 1)*int(self.payzen_multi_period)))
+            if x==0:
+                config += str(datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])).strftime('%Y%m%d')) + u'=' + str(int(first)) + ';'
+            elif x == (int(self.payzen_multi_count) - 1):
+                config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(last))
+            else:
+                config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(monthly)) + ';'
+        so.monthly_payment = monthly
+        tx_values.update({
+            'vads_payment_config': config
+        })
         return tx_values
 
     def _get_payments_so(self, so, amount):
