@@ -54,13 +54,13 @@ auprès de ${object.company_id.name}.
         Premier paiement de
         ${format_amount(object.first_payment_amount, object.currency_id)}<br>
         le ${format_date(object.date_order)}<br>
-        Prochain paiement de ${format_amount((object.amount_total - object.first_payment_amount) / ((object.payzen_get_months - 1) if object.payzen_get_months &gt; 1 else 1), object.currency_id)}
+        Prochain paiement de ${format_amount((object.amount_total - object.first_payment_amount) / ((object.payzen_get_months - 1) if object.payzen_get_months > 1 else 1), object.currency_id)}
         % if object.second_payment_date:
             le ${object.second_payment_date}<br>
         % endif
     % else
-        Avec des paiements à hauteur de ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months &gt; 0 else 1), object.currency_id)}
-        Premier paiment de ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months &gt; 0 else 1), object.currency_id)} 
+        Avec des paiements à hauteur de ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months > 0 else 1), object.currency_id)} <br/>
+        Premier paiment de ${format_amount(object.amount_total / (object.payzen_get_months if object.payzen_get_months > 0 else 1), object.currency_id)} <br/>
         le ${format_date(object.date_order)}<br>
     % endif
 % endif
@@ -81,6 +81,7 @@ auprès de ${object.company_id.name}.
 % if object.user_id and object.user_id.signature:
     ${object.user_id.signature | safe}
 % endif
+</p>
 ]]>
             </field>
         </record>
