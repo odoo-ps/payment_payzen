@@ -243,10 +243,6 @@ class AcquirerPayzen(models.Model):
             tx_values = self._alter_with_so_data(tx_values, so, amount)
             if so.partner_id.customer_nbr:
                 tx_values.update({'vads_cust_id': str(so.partner_id.customer_nbr)})
-            tx_values.update({
-                'vads_shop_name': str(so.company_id.name),
-                'vads_shop_url': str(so.company_id.website)
-                })
 
         if self.payzen_redirect:
             tx_values.update({
