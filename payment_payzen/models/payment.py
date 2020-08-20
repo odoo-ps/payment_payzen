@@ -199,7 +199,7 @@ class AcquirerPayzen(models.Model):
             'vads_trans_date': str(datetime.utcnow().strftime("%Y%m%d%H%M%S")),
             'vads_trans_id': str(trans_id),
             'vads_ctx_mode': str(self._get_ctx_mode()),
-            'vads_page_action': u'PAYMENT',
+            'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
             'vads_action_mode': u'INTERACTIVE',
             'vads_payment_config': self._get_payment_config(amount),
             'vads_version': constants.PAYZEN_PARAMS.get('GATEWAY_VERSION'),
