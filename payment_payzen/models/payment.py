@@ -283,7 +283,7 @@ class AcquirerPayzen(models.Model):
         if so.second_payment_date:
             secdate = datetime.strptime(so.second_payment_date.split(' ')[0], '%Y-%m-%d')
         else:
-            secdate = datetime.strptime((fdate + relativedelta(days=+int((self.payzen_multi_period or 30))).strftime('%Y-%m-%d')), '%Y-%m-%d')
+            secdate = datetime.strptime((fdate + relativedelta(days=+int((self.payzen_multi_period or 30)))).strftime('%Y-%m-%d'), '%Y-%m-%d')
         capture_delay = abs((secdate - fdate).days)
         tx_values.update({
             'vads_capture_delay': str(capture_delay)
