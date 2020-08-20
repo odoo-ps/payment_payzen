@@ -11,7 +11,7 @@
                 <xpath expr="//field[@name='pricelist_id']" position="after">
                     <field name="date_order"/>
                     <field name="payment_acquier_id" domain="[('is_for_payments_dd', '=', True)]"/>
-                    <field name="second_payment_date" attrs="{'invisible': [('payment_acquier_id.payzen_multi_count', '<', '12')]}"/>
+                    <field name="second_payment_date" attrs="{'invisible': [('payment_acquier_id.payzen_multi_count', '&lt;', '12')]}"/>
                     <field name="first_payment_amount"/>
                 </xpath>
             </field>
