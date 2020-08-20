@@ -274,21 +274,37 @@ class AcquirerPayzen(models.Model):
         return self.payzen_gateway_url
 
     def _alter_with_so_data(self, tx_values, so, amount):
+        has_first_payment = True
         if not so.first_payment_amount:
+            has_first_payment = False
             so.first_payment_amount = amount / int(self.payzen_multi_count) / 100
         first, monthly, last = self._get_payments_so(so, amount)
 
-        config = u'MULTI:'
-        fdate = datetime.strptime(so.date_order.split(' ')[0], '%Y-%m-%d')
-        if so.second_payment_date:
-            secdate = datetime.strptime(so.second_payment_date.split(' ')[0], '%Y-%m-%d')
+        if self.payzen_multi_count < 12:
+            config = u'MULTI_EXT:'
+            fdate = so.date_order.split(' ')[0].split('-')
+            secdate = so.second_payment_date if so.second_payment_date else (datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])) + relativedelta(days=+int(self.payzen_multi_period))).strftime('%Y-%m-%d')
+            secdate = secdate.split(' ')[0].split('-')
+            for x in range(int(self.payzen_multi_count)):
+                ndate = datetime(int(secdate[0]), int(secdate[1]), int(secdate[2])) + relativedelta(days=+((x - 1)*int(self.payzen_multi_period)))
+                if x==0:
+                    config += str(datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])).strftime('%Y%m%d')) + u'=' + str(int(first)) + ';'
+                elif x == (int(self.payzen_multi_count) - 1):
+                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(last))
+                else:
+                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(monthly)) + ';'
         else:
-            secdate = datetime.strptime((fdate + relativedelta(days=+int((self.payzen_multi_period or 30)))).strftime('%Y-%m-%d'), '%Y-%m-%d')
-        capture_delay = abs((secdate - fdate).days)
-        tx_values.update({
-            'vads_capture_delay': str(capture_delay)
-        })
-        config += 'first=' + str(first) + ';count=' + str(self.payzen_multi_count) + ';period=' + str((self.payzen_multi_period or 30))
+            config = u'MULTI:'
+            today = datetime.today()
+            fdate = datetime.strptime(so.date_order.split(' ')[0], '%Y-%m-%d')
+            capture_delay = abs((today - fdate).days)
+            tx_values.update({
+                'vads_capture_delay': str(capture_delay)
+            })
+            if has_first_payment:
+                config += 'first=' + str(first) + ';'
+            config += 'count=' + str(self.payzen_multi_count) + ';period=' + str((self.payzen_multi_period or 30))
+
         so.monthly_payment = monthly
         tx_values.update({
             'vads_payment_config': config
