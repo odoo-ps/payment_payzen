@@ -290,8 +290,8 @@ class AcquirerPayzen(models.Model):
         sec_date = so.second_payment_date or (sec_date + relativedelta(days=+(int(self.payzen_multi_period) or 30))).strftime('%Y-%m-%d')
         sec_date = sec_date.split(' ')[0].split('-')
 
-        vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + ';'
-        bymonthday = u'BYMONTHDAY=' + str(int(sec_date[2])) + ';'
+        vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + u';'
+        bymonthday = u'BYMONTHDAY=' + str(int(sec_date[2])) + u';'
         if int(sec_date[2]) > 28:
             bymonthday = u'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
         vads_sub_desc += bymonthday
@@ -314,8 +314,6 @@ class AcquirerPayzen(models.Model):
                 'vads_capture_delay': str(capture_delay)
             })
         else:
-            del tx_values['vads_amount']
-            del tx_values['vads_payment_config']
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
