@@ -263,6 +263,7 @@ class AcquirerPayzen(models.Model):
             payzen_tx_values[key] = tx_values[key].encode('utf-8')
 
         payzen_tx_values['payzen_signature'] = self._payzen_generate_sign(self, tx_values)
+        _logger.info(payzen_tx_values)
         return payzen_tx_values
 
     def payzenmulti_form_generate_values(self, values):
