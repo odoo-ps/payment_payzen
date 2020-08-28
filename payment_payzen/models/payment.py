@@ -302,10 +302,11 @@ class AcquirerPayzen(models.Model):
                 'vads_sub_effect_date': u''.join([str(i) for i in sec_date])
             })
         else:
+            del tx_values['vads_amount']
+            del tx_values['vads_payment_config']
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
-                'vads_payment_config': u'SINGLE',
                 'vads_sub_amount': str(monthly),
                 'vads_sub_effect_date': u''.join([str(i) for i in sec_date])
             })
