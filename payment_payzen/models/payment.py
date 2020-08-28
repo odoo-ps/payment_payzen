@@ -378,10 +378,10 @@ class TransactionPayzen(models.Model):
         invalid_parameters = []
 
         # Check what is bought.
-        amount = float(int(data.get('vads_amount', 0)) / math.pow(10, int(self.currency_id.decimal_places)))
+        #amount = float(int(data.get('vads_amount', 0)) / math.pow(10, int(self.currency_id.decimal_places)))
 
-        if float_compare(amount, self.amount, int(self.currency_id.decimal_places)) != 0:
-            invalid_parameters.append(('amount', amount, '{:.2f}'.format(self.amount)))
+        #if float_compare(amount, self.amount, int(self.currency_id.decimal_places)) != 0:
+        #    invalid_parameters.append(('amount', amount, '{:.2f}'.format(self.amount)))
 
         currency_code = tools.find_currency(self.currency_id.name)
         if (currency_code is None) or (int(data.get('vads_currency')) != int(currency_code)):
