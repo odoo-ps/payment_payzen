@@ -296,9 +296,9 @@ class AcquirerPayzen(models.Model):
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
-                'vads_amount': first,
+                'vads_amount': str(first),
                 'vads_payment_config': u'SINGLE',
-                'vads_sub_amount': monthly,
+                'vads_sub_amount': str(monthly),
                 'vads_sub_effect_date': ''.join([i for i in sec_date])
             })
         else:
@@ -306,7 +306,7 @@ class AcquirerPayzen(models.Model):
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
                 'vads_payment_config': u'SINGLE',
-                'vads_sub_amount': monthly,
+                'vads_sub_amount': str(monthly),
                 'vads_sub_effect_date': ''.join([i for i in sec_date])
             })
         
