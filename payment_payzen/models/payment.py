@@ -297,13 +297,17 @@ class AcquirerPayzen(models.Model):
         vads_sub_desc += bymonthday
 
         if has_first_payment:
+            first_date = datetime.strptime(first_date, '%Y-%m-%d')
+            today = datetime.today()
+            capture_delay = abs((first_date - today).days)
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
                 'vads_amount': str(first),
                 'vads_payment_config': u'SINGLE',
                 'vads_sub_amount': str(monthly),
-                'vads_sub_effect_date': u''.join([str(i) for i in sec_date])
+                'vads_sub_effect_date': u''.join([str(i) for i in sec_date]),
+                'vads_capture_delay': str(capture_delay)
             })
         else:
             del tx_values['vads_amount']
