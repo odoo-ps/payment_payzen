@@ -290,13 +290,14 @@ class AcquirerPayzen(models.Model):
         sec_date = so.second_payment_date or (sec_date + relativedelta(days=+(int(self.payzen_multi_period) or 30))).strftime('%Y-%m-%d')
         sec_date = sec_date.split(' ')[0].split('-')
 
-        vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + u';'
+        vads_sub_desc = u'RRULE:FREQ=MONTHLY;'
         bymonthday = u'BYMONTHDAY=' + str(int(sec_date[2])) + u';'
         if int(sec_date[2]) > 28:
             bymonthday = u'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
         vads_sub_desc += bymonthday
 
         if has_first_payment:
+            vads_sub_desc += u'COUNT=' + str(int(self.payzen_multi_count)-1) + u';'
             first_date = datetime.strptime(first_date, '%Y-%m-%d')
             today = datetime.today()
             capture_delay = abs((first_date - today).days)
@@ -314,6 +315,7 @@ class AcquirerPayzen(models.Model):
                 'vads_capture_delay': str(capture_delay)
             })
         else:
+            vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
@@ -327,7 +329,7 @@ class AcquirerPayzen(models.Model):
 
     def _get_payments_so(self, so, amount):
         first = int(so.first_payment_amount * 100)
-        monthly = int((amount - first) / (int(self.payzen_multi_count) - 1))
+        monthly = int(round((amount - first) / (int(self.payzen_multi_count) - 1)))
         last = int(amount - first - ((int(self.payzen_multi_count) - 2) * monthly))
         return first, monthly, last
 
