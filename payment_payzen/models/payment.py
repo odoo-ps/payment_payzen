@@ -196,10 +196,11 @@ class AcquirerPayzen(models.Model):
             'vads_site_id': self.payzen_site_id,
             'vads_amount': str(amount),
             'vads_currency': currency_num,
+            'vads_sub_currency': currency_num,
             'vads_trans_date': str(datetime.utcnow().strftime("%Y%m%d%H%M%S")),
             'vads_trans_id': str(trans_id),
             'vads_ctx_mode': str(self._get_ctx_mode()),
-            'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
+            'vads_page_action': u'PAYMENT',
             'vads_action_mode': u'INTERACTIVE',
             'vads_payment_config': self._get_payment_config(amount),
             'vads_version': constants.PAYZEN_PARAMS.get('GATEWAY_VERSION'),
@@ -279,39 +280,36 @@ class AcquirerPayzen(models.Model):
             has_first_payment = False
             so.first_payment_amount = amount / int(self.payzen_multi_count) / 100
         first, monthly, last = self._get_payments_so(so, amount)
-        _logger.info('Got payzen_multi_count : ' + str(self.payzen_multi_count))
-        if self.payzen_multi_count < '12':
-            _logger.info('is < 12')
-            config = u'MULTI_EXT:'
-            fdate = so.date_order.split(' ')[0].split('-')
-            secdate = so.second_payment_date if so.second_payment_date else (datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])) + relativedelta(days=+int(self.payzen_multi_period))).strftime('%Y-%m-%d')
-            secdate = secdate.split(' ')[0].split('-')
-            for x in range(int(self.payzen_multi_count)):
-                ndate = datetime(int(secdate[0]), int(secdate[1]), int(secdate[2])) + relativedelta(days=+((x - 1)*int(self.payzen_multi_period)))
-                if x==0:
-                    config += str(datetime(int(fdate[0]), int(fdate[1]), int(fdate[2])).strftime('%Y%m%d')) + u'=' + str(int(first)) + ';'
-                elif x == (int(self.payzen_multi_count) - 1):
-                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(last))
-                else:
-                    config += str(ndate.strftime('%Y%m%d')) + u'=' + str(int(monthly)) + ';'
-        else:
-            _logger.info('is not < 12')
-            config = u'MULTI:'
-            today = datetime.today()
-            fdate = datetime.strptime(so.date_order.split(' ')[0], '%Y-%m-%d')
-            capture_delay = abs((today - fdate).days)
-            _logger.info('capture_delay == ' + str(capture_delay))
-            tx_values.update({
-                'vads_capture_delay': str(capture_delay)
-            })
-            if has_first_payment:
-                config += 'first=' + str(first) + ';'
-            config += 'count=' + str(self.payzen_multi_count) + ';period=' + str((self.payzen_multi_period or 30))
-
         so.monthly_payment = monthly
-        tx_values.update({
-            'vads_payment_config': config
-        })
+        first_date = so.date_order.split(' ')[0]
+        sec_date = datetime.strptime(first_date, '%Y-%m-%d')
+        sec_date = so.second_payment_date or (sec_date + relativedelta(days=+self.payzen_multi_count)).strftime('%Y-%m-%d')
+        sec_date = sec_date.split(' ')[0].split('-')
+
+        vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + ';'
+        bymonthday = 'BYMONTHDAY=' + str(sec_date.split('-')[2]) + ';'
+        if int(sec_date[2]) > 28:
+            bymonthday = 'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
+        vads_sub_desc += bymonthday
+
+        if has_first_payment:
+            tx_values.update({
+                'vads_sub_desc': vads_sub_desc,
+                'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
+                'vads_amount': first,
+                'vads_payment_config': u'SINGLE',
+                'vads_sub_amount': monthly,
+                'vads_sub_effect_date': ''.join([i for i in sec_date])
+            })
+        else:
+            tx_values.update({
+                'vads_sub_desc': vads_sub_desc,
+                'vads_page_action': u'REGISTER_SUBSCRIBE',
+                'vads_payment_config': u'SINGLE',
+                'vads_sub_amount': monthly,
+                'vads_sub_effect_date': ''.join([i for i in sec_date])
+            })
+        
         _logger.info('tx_values : ')
         _logger.info(tx_values)
         return tx_values
