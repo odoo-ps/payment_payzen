@@ -195,6 +195,9 @@ class AcquirerPayzen(models.Model):
         tx_values.update({
             'vads_site_id': self.payzen_site_id,
             'vads_amount': str(amount),
+            'vads_sub_desc': u'',
+            'vads_sub_amount': u'',
+            'vads_sub_effect_date': u'',
             'vads_currency': currency_num,
             'vads_sub_currency': currency_num,
             'vads_trans_date': str(datetime.utcnow().strftime("%Y%m%d%H%M%S")),
