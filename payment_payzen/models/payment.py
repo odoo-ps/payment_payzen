@@ -242,7 +242,7 @@ class AcquirerPayzen(models.Model):
         so = self.env['sale.order'].search([('name', '=', reference)])
         if so and so.payment_acquier_id:
             if self.provider == 'payzenmulti':
-                tx_values = self._alter_with_so_data_alter_with_so_data(tx_values, so, amount)
+                tx_values = self._alter_with_so_data(tx_values, so, amount)
             if so.partner_id.customer_nbr:
                 tx_values.update({'vads_cust_id': str(so.partner_id.customer_nbr)})
 
