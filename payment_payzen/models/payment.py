@@ -287,7 +287,7 @@ class AcquirerPayzen(models.Model):
         sec_date = sec_date.split(' ')[0].split('-')
 
         vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + ';'
-        bymonthday = 'BYMONTHDAY=' + str(sec_date.split('-')[2]) + ';'
+        bymonthday = 'BYMONTHDAY=' + str(sec_date[2]) + ';'
         if int(sec_date[2]) > 28:
             bymonthday = 'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
         vads_sub_desc += bymonthday
