@@ -282,12 +282,12 @@ class AcquirerPayzen(models.Model):
         has_first_payment = True
         if not so.first_payment_amount:
             has_first_payment = False
-            so.first_payment_amount = amount / int(self.payzen_multi_count) / 100
+            so.first_payment_amount = amount / int((self.payzen_multi_count or 1)) / 100
         first, monthly, last = self._get_payments_so(so, amount)
         so.monthly_payment = monthly
         first_date = so.date_order.split(' ')[0]
         sec_date = datetime.strptime(first_date, '%Y-%m-%d')
-        sec_date = so.second_payment_date or (sec_date + relativedelta(days=+self.payzen_multi_count)).strftime('%Y-%m-%d')
+        sec_date = so.second_payment_date or (sec_date + relativedelta(days=+(int(self.payzen_multi_period) or 30))).strftime('%Y-%m-%d')
         sec_date = sec_date.split(' ')[0].split('-')
 
         vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + ';'
