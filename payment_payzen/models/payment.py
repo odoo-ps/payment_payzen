@@ -242,7 +242,7 @@ class AcquirerPayzen(models.Model):
         so = self.env['sale.order'].search([('name', '=', reference)])
         if so and so.payment_acquier_id:
             if self.provider == 'payzenmulti':
-                tx_values = self._alter_with_so_data(tx_values, so, amount)
+                tx_values = self._alter_with_so_data_alter_with_so_data(tx_values, so, amount)
             if so.partner_id.customer_nbr:
                 tx_values.update({'vads_cust_id': str(so.partner_id.customer_nbr)})
 
@@ -287,9 +287,9 @@ class AcquirerPayzen(models.Model):
         sec_date = sec_date.split(' ')[0].split('-')
 
         vads_sub_desc = u'RRULE:FREQ=MONTHLY;COUNT=' + str(self.payzen_multi_count) + ';'
-        bymonthday = 'BYMONTHDAY=' + str(sec_date[2]) + ';'
+        bymonthday = u'BYMONTHDAY=' + str(sec_date[2]) + ';'
         if int(sec_date[2]) > 28:
-            bymonthday = 'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
+            bymonthday = u'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
         vads_sub_desc += bymonthday
 
         if has_first_payment:
@@ -299,7 +299,7 @@ class AcquirerPayzen(models.Model):
                 'vads_amount': str(first),
                 'vads_payment_config': u'SINGLE',
                 'vads_sub_amount': str(monthly),
-                'vads_sub_effect_date': ''.join([i for i in sec_date])
+                'vads_sub_effect_date': u''.join([str(i) for i in sec_date])
             })
         else:
             tx_values.update({
@@ -307,7 +307,7 @@ class AcquirerPayzen(models.Model):
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
                 'vads_payment_config': u'SINGLE',
                 'vads_sub_amount': str(monthly),
-                'vads_sub_effect_date': ''.join([i for i in sec_date])
+                'vads_sub_effect_date': u''.join([str(i) for i in sec_date])
             })
         
         _logger.info('tx_values : ')
