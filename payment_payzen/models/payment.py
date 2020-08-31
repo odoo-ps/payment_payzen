@@ -342,7 +342,7 @@ class AcquirerPayzen(models.Model):
             })
         
         _logger.info('tx_values : ')
-        _logger.info(tx_values)x
+        _logger.info(tx_values)
         return tx_values
 
     def _get_payments_so(self, so, amount):
