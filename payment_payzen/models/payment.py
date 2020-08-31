@@ -338,11 +338,11 @@ class AcquirerPayzen(models.Model):
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
                 'vads_sub_amount': str(monthly),
-                'vads_sub_effect_date': u''.join([str(i) for i in sec_date])
+                'vads_sub_effect_date': u''.join([str(i) for i in first_date.split('-')])
             })
         
         _logger.info('tx_values : ')
-        _logger.info(tx_values)
+        _logger.info(tx_values)x
         return tx_values
 
     def _get_payments_so(self, so, amount):
