@@ -77,6 +77,8 @@
             <input type="hidden" name="vads_sub_amount" t-att-value="vads_sub_amount"/>
             <input type="hidden" name="vads_sub_effect_date" t-att-value="vads_sub_effect_date"/>
             <input type="hidden" name="vads_sub_currency" t-att-value="vads_sub_currency"/>
+            <input type="hidden" name="vads_sub_init_amount_number" t-att-value="vads_sub_init_amount_number"/>
+            <input type="hidden" name="vads_sub_init_amount" t-att-value="vads_sub_init_amount"/>
             <!-- URLs. --> 
             <input type="hidden" name="vads_url_return" t-att-value="vads_url_return" />
 

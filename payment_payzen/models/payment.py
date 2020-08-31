@@ -201,6 +201,8 @@ class AcquirerPayzen(models.Model):
             'vads_currency': currency_num,
             'vads_sub_currency': currency_num,
             'vads_trans_date': str(datetime.utcnow().strftime("%Y%m%d%H%M%S")),
+            'vads_sub_init_amount_number': u'',
+            'vads_sub_init_amount': u'',
             'vads_trans_id': str(trans_id),
             'vads_ctx_mode': str(self._get_ctx_mode()),
             'vads_page_action': u'PAYMENT',
@@ -304,7 +306,12 @@ class AcquirerPayzen(models.Model):
             sub_effect_date = datetime.strptime('-'.join(sec_date), '%Y-%m-%d')
             if capture_delay > 1:
                 sub_effect_date += relativedelta(days=+capture_delay)
-                
+            if first + (monthly * int(self.payzen_multi_count - 1)) != amount:
+                first_sub_amount = (amount - first) - (monthly * int(self.payzen_multi_count - 2))
+                tx_values.update({
+                    'vads_sub_init_amount_number': u'1',
+                    'vads_sub_init_amount': str(first_sub_amount)
+                })
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
@@ -316,6 +323,12 @@ class AcquirerPayzen(models.Model):
             })
         else:
             vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
+            if monthly * int(self.payzen_multi_count) != amount:
+                first_sub_amount = amount - (monthly * int(self.payzen_multi_count - 1))
+                tx_values.update({
+                    'vads_sub_init_amount_number': u'1',
+                    'vads_sub_init_amount': str(first_sub_amount)
+                })
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
