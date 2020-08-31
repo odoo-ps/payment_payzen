@@ -282,10 +282,12 @@ class AcquirerPayzen(models.Model):
 
     def _alter_with_so_data(self, tx_values, so, amount):
         has_first_payment = True
+        so.first_payment_amount_mail = so.first_payment_amount
         if not so.first_payment_amount:
             has_first_payment = False
-            so.first_payment_amount = amount / int((self.payzen_multi_count or 1)) / 100
+            so.first_payment_amount_mail = amount / int((self.payzen_multi_count or 1)) / 100
         first, monthly, last = self._get_payments_so(so, amount)
+        so.payzen_payment_monthly_amount = monthly
         so.monthly_payment = monthly
         first_date = so.date_order.split(' ')[0]
         sec_date = datetime.strptime(first_date, '%Y-%m-%d')
@@ -307,6 +309,7 @@ class AcquirerPayzen(models.Model):
 
             if first + (monthly * int(int(self.payzen_multi_count) - 1)) != amount:
                 first_sub_amount = (amount - first) - (monthly * int(int(self.payzen_multi_count) - 2))
+                so.first_sub_payment_amount_mail = first_sub_amount / 100
                 tx_values.update({
                     'vads_sub_init_amount_number': u'1',
                     'vads_sub_init_amount': str(first_sub_amount)
@@ -324,6 +327,7 @@ class AcquirerPayzen(models.Model):
             vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
             if monthly * int(self.payzen_multi_count) != amount:
                 first_sub_amount = amount - (monthly * int(int(self.payzen_multi_count) - 1))
+                so.first_sub_payment_amount_mail = first_sub_amount
                 tx_values.update({
                     'vads_amount': str(first_sub_amount),
                     'vads_sub_init_amount_number': u'1',
@@ -345,7 +349,7 @@ class AcquirerPayzen(models.Model):
         return tx_values
 
     def _get_payments_so(self, so, amount):
-        first = int(so.first_payment_amount * 100)
+        first = int(so.first_payment_amount_mail * 100)
         monthly = int(round((amount - first) / (int(self.payzen_multi_count) - 1)))
         last = int(amount - first - ((int(self.payzen_multi_count) - 2) * monthly))
         return first, monthly, last

@@ -9,6 +9,9 @@ class SaleOrder(models.Model):
     second_payment_date = fields.Date('Second payment date')
     first_payment_amount = fields.Monetary('First amount to pay')
     payzen_get_months = fields.Integer(compute='_on_payment_acquier_id')
+    first_payment_amount_mail = fields.Monetary()
+    first_sub_payment_amount_mail = fields.Monetary()
+    payzen_payment_monthly_amount = fields.Monetary()
 
     @api.onchange('order_line')
     def _onchange_order_line(self):
