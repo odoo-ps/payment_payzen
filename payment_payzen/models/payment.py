@@ -304,8 +304,7 @@ class AcquirerPayzen(models.Model):
             today = date.today()
             capture_delay = abs((first_date.date() - today).days)
             sub_effect_date = datetime.strptime('-'.join(sec_date), '%Y-%m-%d')
-            if capture_delay > 1:
-                sub_effect_date += relativedelta(days=+capture_delay)
+
             if first + (monthly * int(int(self.payzen_multi_count) - 1)) != amount:
                 first_sub_amount = (amount - first) - (monthly * int(int(self.payzen_multi_count) - 2))
                 tx_values.update({
