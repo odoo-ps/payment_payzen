@@ -8,7 +8,7 @@
 # License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
 
 import base64
-from datetime import datetime
+from datetime import datetime, date
 from hashlib import sha1, sha256
 from dateutil.relativedelta import *
 import hmac
@@ -301,8 +301,8 @@ class AcquirerPayzen(models.Model):
         if has_first_payment:
             vads_sub_desc += u'COUNT=' + str(int(self.payzen_multi_count)-1) + u';'
             first_date = datetime.strptime(first_date, '%Y-%m-%d')
-            today = datetime.today()
-            capture_delay = abs((first_date - today).days)
+            today = date.today()
+            capture_delay = abs((first_date.date() - today).days)
             sub_effect_date = datetime.strptime('-'.join(sec_date), '%Y-%m-%d')
             if capture_delay > 1:
                 sub_effect_date += relativedelta(days=+capture_delay)
