@@ -322,6 +322,7 @@ class AcquirerPayzen(models.Model):
                 'vads_capture_delay': str(capture_delay)
             })
         else:
+            del tx_values['vads_amount']
             vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
             if monthly * int(self.payzen_multi_count) != amount:
                 first_sub_amount = amount - (monthly * int(int(self.payzen_multi_count) - 1))
