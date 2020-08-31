@@ -306,8 +306,8 @@ class AcquirerPayzen(models.Model):
             sub_effect_date = datetime.strptime('-'.join(sec_date), '%Y-%m-%d')
             if capture_delay > 1:
                 sub_effect_date += relativedelta(days=+capture_delay)
-            if first + (monthly * int(self.payzen_multi_count - 1)) != amount:
-                first_sub_amount = (amount - first) - (monthly * int(self.payzen_multi_count - 2))
+            if first + (monthly * int(int(self.payzen_multi_count) - 1)) != amount:
+                first_sub_amount = (amount - first) - (monthly * int(int(self.payzen_multi_count) - 2))
                 tx_values.update({
                     'vads_sub_init_amount_number': u'1',
                     'vads_sub_init_amount': str(first_sub_amount)
@@ -324,7 +324,7 @@ class AcquirerPayzen(models.Model):
         else:
             vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
             if monthly * int(self.payzen_multi_count) != amount:
-                first_sub_amount = amount - (monthly * int(self.payzen_multi_count - 1))
+                first_sub_amount = amount - (monthly * int(int(self.payzen_multi_count) - 1))
                 tx_values.update({
                     'vads_sub_init_amount_number': u'1',
                     'vads_sub_init_amount': str(first_sub_amount)
