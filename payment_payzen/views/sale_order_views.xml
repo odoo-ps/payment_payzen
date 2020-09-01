@@ -17,7 +17,7 @@
             </field>
         </record>
 
-        <record id="sale_mail_template_edi" model="mail.template">
+        <record id="sale_mail_template_payzen_info" model="mail.template">
             <field name="name">Sale Order - Send By Mail (Payzen info)</field>
             <field name="model_id" ref="model_sale_order"/>
             <field name="body_html">
@@ -59,23 +59,23 @@ auprès de ${object.company_id.name}.
             % if object.second_payment_date:
                 le ${format_date(object.second_payment_date)}<br>
             % endif
-            Ensuite, paiments de ${format_amount(object.payzen_payment_monthly_amount, object.currency_id)}
+            Ensuite, paiments de ${format_amount((object.payzen_payment_monthly_amount / 100), object.currency_id)}
         % else
-        Prochain paiement de ${format_amount(object.payzen_payment_monthly_amount, object.currency_id)}
+        Prochain paiement de ${format_amount((object.payzen_payment_monthly_amount / 100), object.currency_id)}
             % if object.second_payment_date:
                 le ${format_date(object.second_payment_date)}<br>
             % endif
         % endif
     % else
-        Avec des paiements à hauteur de ${format_amount(object.payzen_payment_monthly_amount, object.currency_id)} <br/>
+        Avec des paiements à hauteur de ${format_amount((object.payzen_payment_monthly_amount / 100), object.currency_id)} <br/>
         % if object.first_sub_payment_amount_mail
             La première mensualité sera de ${format_amount(object.first_sub_payment_amount_mail, object.currency_id)} pour faire la balance, 
             % if object.second_payment_date:
                 le ${format_date(object.second_payment_date)}<br>
             % endif
-            Ensuite, paiments de ${format_amount(object.payzen_payment_monthly_amount, object.currency_id)}
+            Ensuite, paiments de ${format_amount((object.payzen_payment_monthly_amount / 100), object.currency_id)}
         % else
-        Prochain paiement de ${format_amount(object.payzen_payment_monthly_amount, object.currency_id)}
+        Prochain paiement de ${format_amount((object.payzen_payment_monthly_amount / 100), object.currency_id)}
             % if object.second_payment_date:
                 le ${format_date(object.second_payment_date)}<br>
             % endif
