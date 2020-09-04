@@ -306,14 +306,14 @@ class AcquirerPayzen(models.Model):
             if so.first_sub_payment_amount_mail:
                 tx_values.update({
                     'vads_sub_init_amount_number': u'1',
-                    'vads_sub_init_amount': str(so.first_sub_payment_amount_mail)
+                    'vads_sub_init_amount': str(int(so.first_sub_payment_amount_mail * 100))
                 })
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
-                'vads_amount': str(so.first_payment_amount_mail),
+                'vads_amount': str(int(so.first_payment_amount_mail * 100)),
                 'vads_payment_config': u'SINGLE',
-                'vads_sub_amount': str(so.payzen_payment_monthly_amount),
+                'vads_sub_amount': str(int(so.payzen_payment_monthly_amount * 100)),
                 'vads_sub_effect_date': str(sub_effect_date.strftime('%Y%m%d')),
                 'vads_capture_delay': str(capture_delay)
             })
@@ -321,18 +321,18 @@ class AcquirerPayzen(models.Model):
             vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
             if so.first_sub_payment_amount_mail:
                 tx_values.update({
-                    'vads_amount': str(so.first_sub_payment_amount_mail),
+                    'vads_amount': str(int(so.first_sub_payment_amount_mail * 100)),
                     'vads_sub_init_amount_number': u'1',
-                    'vads_sub_init_amount': str(so.first_sub_payment_amount_mail)
+                    'vads_sub_init_amount': str(int(so.first_sub_payment_amount_mail * 100))
                 })
             else:
                 tx_values.update({
-                    'vads_amount': str(so.payzen_payment_monthly_amount)
+                    'vads_amount': str(int(so.payzen_payment_monthly_amount * 100))
                 })
             tx_values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': u'REGISTER_SUBSCRIBE',
-                'vads_sub_amount': str(so.payzen_payment_monthly_amount),
+                'vads_sub_amount': str(int(so.payzen_payment_monthly_amount * 100)),
                 'vads_sub_effect_date': u''.join([str(i) for i in first_date.split('-')])
             })
         
