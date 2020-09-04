@@ -33,14 +33,11 @@ class SaleOrder(models.Model):
     @api.depends('payment_acquier_id', 'amount_total')
     def _get_payzen_amounts(self):
         for sale in self:
-            if sale.first_payment_amount:
-                sale.first_payment_amount_mail = sale.first_payment_amount
             first, monthly = self._get_payments_so()
             amount = sale.amount_total * 100
             if first + (monthly * int(int(sale.payment_acquier_id.payzen_multi_count) - 1)) != amount:
                 first_sub_amount = (amount - first) - (monthly * int(int(sale.payment_acquier_id.payzen_multi_count) - 2))
                 sale.first_sub_payment_amount_mail = first_sub_amount / 100
-            sale.payzen_payment_monthly_amount = monthly / 100
 
 
     @api.onchange('first_payment_amount')
@@ -50,6 +47,12 @@ class SaleOrder(models.Model):
 
     def _get_payments_so(self):
         self.ensure_one()
-        first = int(self.first_payment_amount_mail * 100)
-        monthly = int(round((self.amount_total * 100 - first) / (int(self.payment_acquier_id.payzen_multi_count) - 1)))
+        if self.first_payment_amount:
+            self.first_payment_amount_mail = self.first_payment_amount
+            first = int(self.first_payment_amount * 100)
+            monthly = int(round((self.amount_total * 100 - first) / (int(self.payment_acquier_id.payzen_multi_count) - 1)))
+        else:
+            first = monthly = int(round((self.amount_total * 100) / int(self.payment_acquier_id.payzen_multi_count)))
+            self.first_payment_amount_mail = 0
+        self.payzen_payment_monthly_amount = monthly / 100
         return first, monthly
