@@ -35,7 +35,7 @@ class SaleOrder(models.Model):
         for sale in self:
             if sale.first_payment_amount:
                 sale.first_payment_amount_mail = sale.first_payment_amount
-            first, monthly = sale._get_payzen_amounts()
+            first, monthly = self._get_payments_so()
             amount = sale.amount_total * 100
             sale.payzen_payment_monthly_amount = monthly
             if first + (monthly * int(int(sale.payment_acquier_id.payzen_multi_count) - 1)) != amount:
