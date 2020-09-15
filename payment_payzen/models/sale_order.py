@@ -50,9 +50,9 @@ class SaleOrder(models.Model):
         if self.first_payment_amount:
             self.first_payment_amount_mail = self.first_payment_amount
             first = int(self.first_payment_amount * 100)
-            monthly = int(round((self.amount_total * 100 - first) / (int(self.payment_acquier_id.payzen_multi_count) - 1)))
+            monthly = int(round((self.amount_total * 100 - first) / ((int(self.payment_acquier_id.payzen_multi_count) - 1) or 1)))
         else:
-            first = monthly = int(round((self.amount_total * 100) / int(self.payment_acquier_id.payzen_multi_count)))
+            first = monthly = int(round((self.amount_total * 100) / (int(self.payment_acquier_id.payzen_multi_count) or 1)))
             self.first_payment_amount_mail = 0
         self.payzen_payment_monthly_amount = monthly / 100
         return first, monthly
