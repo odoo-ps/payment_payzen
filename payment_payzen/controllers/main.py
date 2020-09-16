@@ -56,13 +56,13 @@ class PayzenController(http.Controller):
 class WebsiteSale(WebsiteSale):
     def _get_shop_payment_values(self, order, **kwargs):
         ret = super(WebsiteSale, self)._get_shop_payment_values(order, **kwargs)
-        for r in ret:
-            if len(r['form_acquirers']):
-                for i in r['form_acquirers']:
-                    if order.payment_acquire_id and i.id != order.payment_acquire_id.id:
-                        r['form_acquirers'].remove(i)
-            if len(r['s2s_acquirers']):
-                for i in r['s2s_acquirers']:
-                    if order.payment_acquire_id and i.id != order.payment_acquire_id.id:
-                        r['s2s_acquirers'].remove(i)
+        if order.payment_acquire_id:
+            if len(ret['form_acquirers']):
+                for i in ret['form_acquirers']:
+                    if i.id != order.payment_acquire_id.id:
+                        ret['form_acquirers'].remove(i)
+            if len(ret['s2s_acquirers']):
+                for i in ret['s2s_acquirers']:
+                    if i.id != order.payment_acquire_id.id:
+                        ret['s2s_acquirers'].remove(i)
         return ret
