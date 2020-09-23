@@ -282,7 +282,7 @@ class AcquirerPayzen(models.Model):
 
     def _alter_with_so_data(self, tx_values, so, amount):
         has_first_payment = True
-        if not so.first_payment_amount:
+        if not so.first_payment_amount and not so.first_payment_amount_mail:
             has_first_payment = False
 
         first_date = so.date_order.split(' ')[0]

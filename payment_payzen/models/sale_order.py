@@ -56,5 +56,7 @@ class SaleOrder(models.Model):
             monthly = (self.amount_total * 100 - rest) / (int(self.payment_acquier_id.payzen_multi_count) or 1)
             first = monthly + rest
             self.first_payment_amount_mail = 0
+            if first != monthly:
+                self.first_payment_amount_mail = first / 100
         self.payzen_payment_monthly_amount = monthly / 100
         return first, monthly
