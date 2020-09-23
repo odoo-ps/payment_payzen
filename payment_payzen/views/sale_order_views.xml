@@ -50,7 +50,7 @@ auprès de ${object.company_id.name}.
     % if object.payment_acquier_id.payzen_multi_count:
         Payable en ${object.payment_acquier_id.payzen_multi_count} fois<br>
     % endif
-    % if object.first_payment_amount
+    % if object.first_payment_amount or object.first_payment_amount_mail
         Premier paiement de
         ${format_amount(object.first_payment_amount_mail, object.currency_id)}
         le ${format_date(object.date_order)}<br>
