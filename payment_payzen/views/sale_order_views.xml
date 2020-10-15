@@ -41,12 +41,15 @@ Vous trouverez ci-dessous  les détails de
 % else
 votre commande  <strong>${object.name}</strong>
 % endif
-pour un montant total de <strong>${format_amount(object.amount_total, object.currency_id)}</strong>
+pour un montant total de <strong>${format_amount(object.amount_total, object.currency_id)}</strong> 
+% if not object.payment_acquier_id.provider == 'payzenmulti':
+ le ${format_date(object.date_order)} 
+% endif
 auprès de ${object.company_id.name}.
 </p>
 
 <p>
-% if object.payment_acquier_id:
+% if object.payment_acquier_id and object.payment_acquier_id.provider == 'payzenmulti':
     % if object.payment_acquier_id.payzen_multi_count:
         Payable en ${object.payment_acquier_id.payzen_multi_count} fois<br>
     % endif
