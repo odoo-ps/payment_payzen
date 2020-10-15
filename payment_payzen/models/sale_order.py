@@ -48,9 +48,10 @@ class SaleOrder(models.Model):
     def _get_payments_so(self):
         self.ensure_one()
         if self.first_payment_amount:
-            self.first_payment_amount_mail = self.first_payment_amount
-            first = int(self.first_payment_amount * 100)
-            monthly = int(round((self.amount_total * 100 - first) / ((int(self.payment_acquier_id.payzen_multi_count) - 1) or 1)))
+            first = self.first_payment_amount_mail = self.first_payment_amount
+            rest = int(100 * round((self.amount_total - first) % (int(self.payment_acquier_id.payzen_multi_count)-1 or 1), 2))
+            monthly = ((self.amount_total - first) * 100  - rest) / (int(self.payment_acquier_id.payzen_multi_count)-1 or 1)
+            first *= 100
         else:
             rest = int(100 * round(self.amount_total % (int(self.payment_acquier_id.payzen_multi_count) or 1), 2))
             monthly = (self.amount_total * 100 - rest) / (int(self.payment_acquier_id.payzen_multi_count) or 1)
@@ -58,5 +59,8 @@ class SaleOrder(models.Model):
             self.first_payment_amount_mail = 0
             if first != monthly:
                 self.first_payment_amount_mail = first / 100
+            # remove two next lines to activate again REGISTER_SUBSCRIBE mode
+            else:
+                self.first_payment_amount_mail = monthly / 100
         self.payzen_payment_monthly_amount = monthly / 100
         return first, monthly

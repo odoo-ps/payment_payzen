@@ -287,7 +287,7 @@ class AcquirerPayzen(models.Model):
 
         first_date = so.date_order.split(' ')[0]
         sec_date = datetime.strptime(first_date, '%Y-%m-%d')
-        sec_date = so.second_payment_date or (sec_date + relativedelta(days=+(int(self.payzen_multi_period) or 30))).strftime('%Y-%m-%d')
+        sec_date = so.second_payment_date or (sec_date + relativedelta(months=+1)).strftime('%Y-%m-%d')
         sec_date = sec_date.split(' ')[0].split('-')
 
         vads_sub_desc = u'RRULE:FREQ=MONTHLY;'
