@@ -244,6 +244,7 @@ class AcquirerPayzen(models.Model):
             'vads_ship_to_phone_num': values.get('partner_phone') and values.get('partner_phone')[0:31] or '',
         })
 
+        reference = reference[:reference.index('x') if 'x' in reference else len(reference)]
         so = self.env['sale.order'].search([('name', '=', reference)])
         if so and so.payment_acquier_id:
             if self.provider == 'payzenmulti':
