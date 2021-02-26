@@ -7,4 +7,6 @@
 # Copyright: Copyright © Lyra Network
 # License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
 
-from . import payment,sale_order,product_template
+from . import payment
+from . import sale_order
+from . import product_template

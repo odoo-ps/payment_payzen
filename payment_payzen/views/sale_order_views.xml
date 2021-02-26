@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='date_order']" position="replace"></xpath>
-                <xpath expr="//field[@name='pricelist_id']" position="after">
+                <xpath expr="//field[@name='payment_term_id']" position="after">
                     <field name="date_order"/>
                     <field name="payment_acquier_id" domain="[('is_for_payments_dd', '=', True)]"/>
                     <field name="second_payment_date"/>
@@ -26,9 +26,10 @@
 % set access_action = object.with_context(force_website=True).get_access_action()
 % set is_online = access_action and access_action['type'] == 'ir.actions.act_url'
 % set doc_name = 'quotation' if object.state in ('draft', 'sent') else 'order confirmation'
-% set pay_sign_name =  object.get_portal_confirmation_action()
-% set access_name = is_online and object.state in ('draft', 'sent') and pay_sign_name in ('pay', 'sign') and 'Accept and %s online' % pay_sign_name or 'View %s' % doc_name
-% set access_url = is_online and object.get_mail_url() or ''
+% set share_url = object.get_mail_url()
+% set base_url = object.get_base_url()
+% set access_url = is_online and share_url and base_url + share_url or ''
+
 
 % if object.partner_id.parent_id:
     (<i>${object.partner_id.parent_id.name}</i>)

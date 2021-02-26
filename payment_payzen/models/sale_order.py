@@ -38,7 +38,9 @@ class SaleOrder(models.Model):
             if first + (monthly * int(int(sale.payment_acquier_id.payzen_multi_count) - 1)) != amount:
                 first_sub_amount = (amount - first) - (monthly * int(int(sale.payment_acquier_id.payzen_multi_count) - 2))
                 sale.first_sub_payment_amount_mail = first_sub_amount / 100
-
+            else:
+                sale.first_sub_payment_amount_mail = 0
+                
 
     @api.onchange('first_payment_amount')
     def _do_recompute(self):
@@ -64,3 +66,6 @@ class SaleOrder(models.Model):
                 self.first_payment_amount_mail = monthly / 100
         self.payzen_payment_monthly_amount = monthly / 100
         return first, monthly
+    
+    def get_mail_url(self):
+        return self._get_share_url()

@@ -9,7 +9,6 @@
 -->
 
 <odoo>
-    <data noupdate="1">
         <template id="payzen_acquirer_button">
             <t t-if="acquirer.payzen_odoo10">
                  <form t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
@@ -89,5 +88,4 @@
                 <![CDATA[</form>]]>
             </t>
         </template>
-    </data>
 </odoo>
