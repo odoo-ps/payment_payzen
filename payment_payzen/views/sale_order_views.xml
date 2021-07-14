@@ -9,7 +9,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='date_order']" position="replace"></xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="date_order"/>
                     <field name="payment_acquier_id" domain="[('is_for_payments_dd', '=', True)]"/>
                     <field name="second_payment_date"/>
                     <field name="first_payment_amount"/>
