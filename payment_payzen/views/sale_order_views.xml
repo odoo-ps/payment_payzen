@@ -7,11 +7,16 @@
             <field name="priority">999</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='date_order']" position="replace"></xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
                     <field name="payment_acquier_id" domain="[('is_for_payments_dd', '=', True)]"/>
                     <field name="second_payment_date"/>
                     <field name="first_payment_amount"/>
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="attributes">
+                    <attribute name="groups"/>
+                </xpath>
+                <xpath expr="//div[label[@for='date_order']]" position="attributes">
+                    <attribute name="groups"/>
                 </xpath>
             </field>
         </record>
