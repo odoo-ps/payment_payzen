@@ -69,3 +69,9 @@ class SaleOrder(models.Model):
     
     def get_mail_url(self):
         return self._get_share_url()
+
+    def _prepare_confirmation_values(self):
+
+        return {
+            'state': 'sale',
+        }
