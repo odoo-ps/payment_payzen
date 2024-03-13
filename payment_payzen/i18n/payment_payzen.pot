@@ -303,11 +303,6 @@ msgid ""
 msgstr ""
 
 #. module: payment_payzen
-#: model:ir.model.fields,field_description:payment_payzen.field_payment_provider__image
-msgid "Image"
-msgstr ""
-
-#. module: payment_payzen
 #. odoo-python
 #: code:addons/payment_payzen/models/payment_provider.py:0
 #: code:addons/payment_payzen/models/payment_provider.py:0

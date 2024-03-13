@@ -259,11 +259,6 @@ msgstr "Si vous activez cette fonctionnalité alors que vous ne disposez pas de 
 "dans l'incapacité de payer."
 
 #. module: payment_payzen
-#: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__image
-msgid "Image"
-msgstr ""
-
-#. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__payzen_multi_count
 #, python-format

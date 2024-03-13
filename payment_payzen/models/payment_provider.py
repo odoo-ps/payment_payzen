@@ -98,7 +98,6 @@ class ProviderPayzen(models.Model):
     payzen_multi_period = fields.Char(string=_('Period'), help=_('Delay (in days) between installments.'))
     payzen_multi_first = fields.Char(string=_('1st installment'), help=_('Amount of first installment, in percentage of total amount. If empty, all installments will have the same amount.'))
 
-    image = fields.Char()
     environment = fields.Char()
 
     payzen_redirect = False
