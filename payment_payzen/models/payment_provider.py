@@ -119,7 +119,7 @@ class ProviderPayzen(models.Model):
     def multi_add(self, filename):
         if (constants.PAYZEN_PLUGIN_FEATURES.get('multi') == True):
             file = path.join(path.dirname(path.dirname(path.abspath(__file__)))) + filename
-            convert_xml_import(self._cr, 'payment_payzen', file)
+            convert_xml_import(self.env, 'payment_payzen', file)
 
         return None
 
