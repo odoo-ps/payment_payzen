@@ -16,35 +16,35 @@
             <field name="inherit_id" ref="payment.payment_provider_form" />
             <field name="arch" type="xml">
                 <group name="provider_credentials" position='after'>
-                    <div attrs="{'invisible': [('code','not in',('payzen','payzenmulti'))]}">
+                    <div invisible="code not in ('payzen', 'payzenmulti')">
                         <group name="payzen_module_information" string="MODULE INFORMATION">
                             <field name="payzen_doc" />
                         </group>
                         <group name="payzen_gateway_access" string="PAYMENT GATEWAY ACCESS">
-                            <field name="payzen_site_id" autocomplete="off" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
-                            <field name="payzen_key_test" autocomplete="off" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
-                            <field name="payzen_key_prod" autocomplete="off" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
-                            <field name="payzen_sign_algo" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
+                            <field name="payzen_site_id" autocomplete="off" required="code in ('payzen', 'payzenmulti')" />
+                            <field name="payzen_key_test" autocomplete="off" required="code in ('payzen', 'payzenmulti')" />
+                            <field name="payzen_key_prod" autocomplete="off" required="code in ('payzen', 'payzenmulti')" />
+                            <field name="payzen_sign_algo" required="code in ('payzen', 'payzenmulti')" />
                             <field name="payzen_notify_url" />
-                            <field name="payzen_gateway_url" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
+                            <field name="payzen_gateway_url" required="code in ('payzen', 'payzenmulti')" />
                         </group>
                         <group string="PAYMENT PAGE">
-                            <field name="payzen_language" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
+                            <field name="payzen_language" required="code in ('payzen', 'payzenmulti')" />
                             <field name="payzen_available_languages" widget="many2many_tags" options="{'no_create': True}" />
                             <field name="payzen_capture_delay" />
-                            <field name="payzen_validation_mode" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
+                            <field name="payzen_validation_mode" required="code in ('payzen', 'payzenmulti')" />
                             <field name="payzen_payment_cards" widget="many2many_tags" options="{'no_create': True}" />
                         </group>
                         <group name="payzen_selective_3ds" string="CUSTOM 3DS">
                             <field name="payzen_threeds_min_amount" />
                         </group>
                         <group string="RETURN TO SHOP">
-                            <field name="payzen_redirect_enabled" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
+                            <field name="payzen_redirect_enabled" required="code in ('payzen', 'payzenmulti')" />
                             <field name="payzen_redirect_success_timeout" />
                             <field name="payzen_redirect_success_message" />
                             <field name="payzen_redirect_error_timeout" />
                             <field name="payzen_redirect_error_message" />
-                            <field name="payzen_return_mode" attrs="{'required': [('code','in',('payzen','payzenmulti'))]}" />
+                            <field name="payzen_return_mode" required="code in ('payzen', 'payzenmulti')" />
                         </group>
                     </div>
                 </group>
@@ -57,15 +57,15 @@
             <field name="inherit_id" ref="payment.payment_transaction_form" />
             <field name="arch" type="xml">
                 <field name="provider_reference" position="after">
-                    <field name="payzen_trans_status" attrs="{'invisible': [('provider_code','not in',('payzen','payzenmulti'))]}" />
-                    <field name="payzen_card_brand" attrs="{'invisible': [('provider_code','not in',('payzen','payzenmulti'))]}" />
-                    <field name="payzen_card_number" attrs="{'invisible': [('provider_code','not in',('payzen','payzenmulti'))]}" />
-                    <field name="payzen_expiration_date" attrs="{'invisible': [('provider_code','not in',('payzen','payzenmulti'))]}" />
-                    <field name="payzen_auth_result" attrs="{'invisible': [('provider_code','not in',('payzen','payzenmulti'))]}" />
+                    <field name="payzen_trans_status" invisible="provider_code not in ('payzen', 'payzenmulti')" />
+                    <field name="payzen_card_brand" invisible="provider_code not in ('payzen', 'payzenmulti')" />
+                    <field name="payzen_card_number" invisible="provider_code not in ('payzen', 'payzenmulti')" />
+                    <field name="payzen_expiration_date" invisible="provider_code not in ('payzen', 'payzenmulti')" />
+                    <field name="payzen_auth_result" invisible="provider_code not in ('payzen', 'payzenmulti')" />
                 </field>
 
                 <xpath expr="//form/sheet/group[last()]" position="after">
-                    <group string="Transaction log" attrs="{'invisible': [('provider_code','not in',('payzen','payzenmulti'))]}">
+                    <group string="Transaction log" invisible="provider_code not in ('payzen', 'payzenmulti')">
                         <field name="payzen_raw_data" nolabel="1" />
                     </group>
                 </xpath>
