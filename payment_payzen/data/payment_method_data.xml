@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+# Copyright © Lyra Network.
+# This file is part of PayZen plugin for Odoo. See COPYING.md for license details.
+#
+# Author:    Lyra Network (https://www.lyra.com)
+# Copyright: Copyright © Lyra Network
+# License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
+-->
+
+<odoo>
+
+    <record id="payment_method_cc_payzencb" model="payment.method">
+        <field name="name">Payzen CB</field>
+        <field name="code">payzen_cb</field>
+        <field name="sequence">1000</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/cb.png"/>
+        <field name="support_tokenization">False</field>
+        <field name="support_express_checkout">False</field>
+        <field name="support_refund"></field>
+    </record>
+
+    <record id="payment_method_cc_payzenvisa" model="payment.method">
+        <field name="name">Payzen Visa</field>
+        <field name="code">payzen_visa</field>
+        <field name="sequence">1000</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/visa.png"/>
+        <field name="support_tokenization">False</field>
+        <field name="support_express_checkout">False</field>
+        <field name="support_refund"></field>
+    </record>
+
+    <record id="payment_method_cc_payzenmastercard" model="payment.method">
+        <field name="name">Payzen MasterCard</field>
+        <field name="code">payzen_mastercard</field>
+        <field name="sequence">1000</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/mastercard.png"/>
+        <field name="support_tokenization">False</field>
+        <field name="support_express_checkout">False</field>
+        <field name="support_refund"></field>
+    </record>
+
+</odoo>

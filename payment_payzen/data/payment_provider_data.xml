@@ -13,11 +13,11 @@
         <record id="payment_provider_payzen" model="payment.provider">
             <field name="name"><![CDATA[PayZen - Standard payment]]></field>
             <field name="display_as">Payment by credit card</field>
-            <field name="payment_icon_ids"
+            <field name="payment_method_ids"
                 eval="[(6, 0, [
-                    ref('payment_payzen.payment_icon_cc_payzencb'),
-                    ref('payment_payzen.payment_icon_cc_payzenvisa'),
-                    ref('payment_payzen.payment_icon_cc_payzenmastercard'),
+                    ref('payment_payzen.payment_method_cc_payzencb'),
+                    ref('payment_payzen.payment_method_cc_payzenvisa'),
+                    ref('payment_payzen.payment_method_cc_payzenmastercard'),
                 ])]"/>
             <field name="image_128" type="base64" file="payment_payzen/static/src/img/logo.png" />
             <field name="code">payzen</field>

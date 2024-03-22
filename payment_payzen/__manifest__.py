@@ -19,7 +19,7 @@
     'data': [
         'views/payment_provider_views.xml',
         'views/payment_payzen_templates.xml',
-        'data/payment_icon_data.xml',
+        'data/payment_method_data.xml',
         'data/payment_provider_data.xml',
         'security/ir.model.access.csv',
     ],
