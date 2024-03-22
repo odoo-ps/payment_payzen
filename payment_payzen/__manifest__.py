@@ -9,7 +9,7 @@
 
 {
     'name': 'PayZen Payment Provider',
-    'version': '3.0.3',
+    'version': '17.0.3.1.0',
     'summary': 'Accept payments with PayZen secure payment gateway.',
     'category': 'Accounting/Payment Providers',
     'author': 'Lyra Network',
