@@ -255,7 +255,7 @@ class ProviderPayzen(models.Model):
     def _get_default_payment_method_id(self, code):
         self.ensure_one()
         if self.code != 'payzen' and self.code != 'payzenmulti':
-            return super()._get_default_payment_method_id(self, code)
+            return super()._get_default_payment_method_id(code)
 
         if self.code == 'payzen':
             return self.env.ref('payment_payzen.payment_method_payzen').id
