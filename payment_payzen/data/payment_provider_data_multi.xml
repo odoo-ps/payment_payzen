@@ -12,7 +12,6 @@
     <data noupdate="1">
         <record id="payment_provider_payzenmulti" model="payment.provider">
             <field name="name"><![CDATA[PayZen - Payment in installments]]></field>
-            <field name="display_as">Payment by credit card in installments</field>
             <field name="payment_method_ids"
                 eval="[(6, 0, [
                     ref('payment_payzen.payment_method_cc_payzencb'),

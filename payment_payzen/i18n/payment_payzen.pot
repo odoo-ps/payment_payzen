@@ -567,16 +567,6 @@ msgid "Payment Transaction"
 msgstr ""
 
 #. module: payment_payzen
-#: model:payment.provider,display_as:payment_payzen.payment_provider_payzen
-msgid "Payment by credit card"
-msgstr ""
-
-#. module: payment_payzen
-#: model:payment.provider,display_as:payment_payzen.payment_provider_payzenmulti
-msgid "Payment by credit card in installments"
-msgstr ""
-
-#. module: payment_payzen
 #. odoo-python
 #: code:addons/payment_payzen/models/payment_provider.py:0
 #: code:addons/payment_payzen/models/payment_provider.py:0
