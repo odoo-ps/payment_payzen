@@ -31,8 +31,8 @@ PAYZEN_PARAMS = {
     'LANGUAGE': 'fr',
 
     'GATEWAY_VERSION': 'V2',
-    'PLUGIN_VERSION': '3.0.3',
-    'CMS_IDENTIFIER': 'Odoo_16',
+    'PLUGIN_VERSION': '3.1.0',
+    'CMS_IDENTIFIER': 'Odoo_17',
 }
 
 PAYZEN_LANGUAGES = {
