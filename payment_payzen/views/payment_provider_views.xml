@@ -15,8 +15,8 @@
             <field name="model">payment.provider</field>
             <field name="inherit_id" ref="payment.payment_provider_form" />
             <field name="arch" type="xml">
-                <group name="provider_credentials" position='after'>
-                    <div invisible="code not in ('payzen', 'payzenmulti')">
+                <group name="provider_credentials" position='inside'>
+                    <group invisible="code not in ('payzen', 'payzenmulti')" class="d-contents">
                         <group name="payzen_module_information" string="MODULE INFORMATION">
                             <field name="payzen_doc" />
                         </group>
@@ -46,7 +46,7 @@
                             <field name="payzen_redirect_error_message" />
                             <field name="payzen_return_mode" required="code in ('payzen', 'payzenmulti')" />
                         </group>
-                    </div>
+                    </group>
                 </group>
             </field>
         </record>
