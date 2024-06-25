@@ -1,3 +1,7 @@
+4.0.0, 2024-05-30
+=============
+- New plugin for Odoo 17.
+
 3.0.3, 2023-09-14
 =============
 - Bug Fix: Fix client return to shop in case of multi-site.

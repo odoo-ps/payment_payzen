@@ -8,36 +8,141 @@
 # License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
 -->
 
-<odoo>
-
-    <record id="payment_method_cc_payzencb" model="payment.method">
-        <field name="name">Payzen CB</field>
-        <field name="code">payzen_cb</field>
+<odoo noupdate="1">
+    <record id="payment_method_payzen" model="payment.method">
+        <field name="name">PayZen</field>
+        <field name="code">payzen</field>
         <field name="sequence">1000</field>
-        <field name="image" type="base64" file="payment_payzen/static/src/img/cb.png"/>
+        <field name="image" type="base64" file="payment/static/img/card.png" />
         <field name="support_tokenization">False</field>
         <field name="support_express_checkout">False</field>
         <field name="support_refund"></field>
     </record>
 
-    <record id="payment_method_cc_payzenvisa" model="payment.method">
-        <field name="name">Payzen Visa</field>
-        <field name="code">payzen_visa</field>
+    <record id="payment_method_payzenmulti" model="payment.method">
+        <field name="name">PayZen Multi</field>
+        <field name="code">payzenmulti</field>
         <field name="sequence">1000</field>
-        <field name="image" type="base64" file="payment_payzen/static/src/img/visa.png"/>
+        <field name="image" type="base64" file="payment/static/img/card.png" />
         <field name="support_tokenization">False</field>
         <field name="support_express_checkout">False</field>
         <field name="support_refund"></field>
     </record>
 
-    <record id="payment_method_cc_payzenmastercard" model="payment.method">
-        <field name="name">Payzen MasterCard</field>
-        <field name="code">payzen_mastercard</field>
+    <record id="payment_method_payzencb" model="payment.method">
+        <field name="name">CB</field>
+        <field name="code">payzencb</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
         <field name="sequence">1000</field>
-        <field name="image" type="base64" file="payment_payzen/static/src/img/mastercard.png"/>
-        <field name="support_tokenization">False</field>
-        <field name="support_express_checkout">False</field>
-        <field name="support_refund"></field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/cb.png" />
     </record>
 
+    <record id="payment_method_payzenvisa" model="payment.method">
+        <field name="name">Visa</field>
+        <field name="code">payzenvisa</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment/static/img/visa.png" />
+    </record>
+
+    <record id="payment_method_payzenmastercard" model="payment.method">
+        <field name="name">Mastercard</field>
+        <field name="code">payzenmastercard</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment/static/img/mastercard.png" />
+    </record>
+
+    <record id="payment_method_payzenamex" model="payment.method">
+        <field name="name">American Express</field>
+        <field name="code">payzenamex</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment/static/img/amex.png" />
+    </record>
+
+     <record id="payment_method_payzenecardtebleue" model="payment.method">
+        <field name="name">e-Carte Bleue</field>
+        <field name="code">payzenecartebleue</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">False</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/e-cartebleue.png" />
+    </record>
+
+    <record id="payment_method_payzenvisaelectron" model="payment.method">
+        <field name="name">Visa Electron</field>
+        <field name="code">payzenvisaelectron</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">False</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/visa_electron.png" />
+    </record>
+
+    <record id="payment_method_payzenvpay" model="payment.method">
+        <field name="name">V PAY</field>
+        <field name="code">payzenvpay</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">False</field>
+        <field name="image" type="base64" file="payment/static/img/vpay.png" />
+    </record>
+
+    <record id="payment_method_payzenapplepay" model="payment.method">
+        <field name="name">Apple Pay</field>
+        <field name="code">payzenapplepay</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">False</field>
+        <field name="image" type="base64" file="payment/static/img/apple_pay.png" />
+    </record>
+
+     <record id="payment_method_payzenpaypal" model="payment.method">
+        <field name="name">PayPal</field>
+        <field name="code">payzenpaypal</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzen')" />
+        <field name="sequence">1000</field>
+        <field name="active">False</field>
+        <field name="image" type="base64" file="payment/static/img/paypal.png" />
+    </record>
+
+    <record id="payment_method_payzenmulticb" model="payment.method">
+        <field name="name">CB</field>
+        <field name="code">payzenmulticb</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzenmulti')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment_payzen/static/src/img/cb.png" />
+    </record>
+
+    <record id="payment_method_payzenmultivisa" model="payment.method">
+        <field name="name">Visa</field>
+        <field name="code">payzenmultivisa</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzenmulti')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment/static/img/visa.png" />
+    </record>
+
+    <record id="payment_method_payzenmultimastercard" model="payment.method">
+        <field name="name">Mastercard</field>
+        <field name="code">payzenmultimastercard</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzenmulti')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment/static/img/mastercard.png" />
+    </record>
+
+    <record id="payment_method_payzenmultiamex" model="payment.method">
+        <field name="name">American Express</field>
+        <field name="code">payzenmultiamex</field>
+        <field name="primary_payment_method_id" eval="ref('payment_method_payzenmulti')" />
+        <field name="sequence">1000</field>
+        <field name="active">True</field>
+        <field name="image" type="base64" file="payment/static/img/amex.png" />
+    </record>
 </odoo>

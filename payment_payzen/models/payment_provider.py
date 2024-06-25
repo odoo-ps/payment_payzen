@@ -252,12 +252,26 @@ class ProviderPayzen(models.Model):
     def payzen_get_form_action_url(self):
         return self.payzen_gateway_url
 
-    def _get_default_payment_method_id(self, code):
-        self.ensure_one()
+    def _get_default_payment_method_codes(self):
         if self.code != 'payzen' and self.code != 'payzenmulti':
-            return super()._get_default_payment_method_id(code)
+            return super()._get_default_payment_method_codes()
 
-        if self.code == 'payzen':
-            return self.env.ref('payment_payzen.payment_method_payzen').id
-        if self.code == 'payzenmulti':
-            return self.env.ref('payment_payzen.payment_method_payzenmulti').id
+        return self.code
+
+    def get_payzen_currencies(self):
+        first_elements = []
+        for currency in constants.PAYZEN_CURRENCIES:
+            first_element = currency[0]
+            first_elements.append(first_element)
+
+        return first_elements
+
+    def _get_supported_currencies(self):
+        """ Override of `payment` to return the supported currencies. """
+        supported_currencies = super()._get_supported_currencies()
+        if self.code in ['payzen', 'payzenmulti']:
+            supported_currencies = supported_currencies.filtered(
+                lambda c: c.name in self.get_payzen_currencies()
+            )
+
+        return supported_currencies

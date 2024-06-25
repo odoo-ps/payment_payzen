@@ -9,7 +9,7 @@
 
 {
     'name': 'PayZen Payment Provider',
-    'version': '17.0.3.1.0',
+    'version': '17.0.4.0.0',
     'summary': 'Accept payments with PayZen secure payment gateway.',
     'category': 'Accounting/Payment Providers',
     'author': 'Lyra Network',
@@ -23,6 +23,8 @@
         'data/payment_provider_data.xml',
         'security/ir.model.access.csv',
     ],
+    'post_init_hook': 'post_init_hook',
+    'uninstall_hook': 'uninstall_hook',
     'images': ['static/description/icon.png'],
     'application': True,
     'installable': True
