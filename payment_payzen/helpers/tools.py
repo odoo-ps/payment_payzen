@@ -8,6 +8,7 @@
 # License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
 
 from odoo import _
+from odoo.tools import float_round
 
 from .constants import PAYZEN_CURRENCIES
 
@@ -20,3 +21,8 @@ def find_currency(iso):
 
 def lang_translate(callback, v):
     return _(v)
+
+
+def amount_in_cents(amount, currency):
+    k = int(currency.decimal_places)
+    return int(float_round(float_round(amount, k) * (10 ** k), 0))

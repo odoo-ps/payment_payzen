@@ -18,10 +18,10 @@
                 <group name="provider_credentials" position='inside'>
                     <group invisible="code not in ('payzen', 'payzenmulti')" class="d-contents">
                         <group name="payzen_module_information" string="MODULE INFORMATION">
+                            <field name="support_recurring"/>
                             <field name="payzen_doc" />
                         </group>
                         <group name="payzen_gateway_access" string="PAYMENT GATEWAY ACCESS">
-                            <field name="is_for_payments_dd"/>
                             <field name="payzen_site_id" autocomplete="off" required="code in ('payzen', 'payzenmulti')" />
                             <field name="payzen_key_test" autocomplete="off" required="code in ('payzen', 'payzenmulti')" />
                             <field name="payzen_key_prod" autocomplete="off" required="code in ('payzen', 'payzenmulti')" />
@@ -69,6 +69,17 @@
                     <group string="Transaction log" invisible="provider_code not in ('payzen', 'payzenmulti')">
                         <field name="payzen_raw_data" nolabel="1" />
                     </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="payment_provider_list" model="ir.ui.view">
+            <field name="name">payment.provider.list.custo.payment_payzen</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="payzen_multi_count" string="Number of payments"/>
                 </xpath>
             </field>
         </record>

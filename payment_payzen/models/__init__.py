@@ -11,4 +11,3 @@ from . import account_payment_method
 from . import payment_provider
 from . import payment_transaction
 from . import sale_order
-from . import product_template

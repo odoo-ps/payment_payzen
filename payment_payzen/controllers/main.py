@@ -17,8 +17,6 @@ from odoo import http, release
 from odoo.http import request
 from odoo.exceptions import ValidationError
 
-from odoo.addons.website_sale.controllers.main import WebsiteSale
-
 _logger = logging.getLogger(__name__)
 
 class PayzenController(http.Controller):
@@ -69,18 +67,3 @@ class PayzenController(http.Controller):
             return 'Bad request received.'
 
         return 'Accepted payment, order has been updated.' if result else 'Payment failure, order has been cancelled.'
-
-
-# class WebsiteSale(WebsiteSale):
-#     def _get_shop_payment_values(self, order, **kwargs):
-#         ret = super(WebsiteSale, self)._get_shop_payment_values(order, **kwargs)
-#         if order.payment_acquier_id:
-#             if len(ret['form_acquirers']):
-#                 for i in ret['form_acquirers']:
-#                     if i.id != order.payment_acquier_id.id:
-#                         ret['form_acquirers'].remove(i)
-#             if len(ret['s2s_acquirers']):
-#                 for i in ret['s2s_acquirers']:
-#                     if i.id != order.payment_acquier_id.id:
-#                         ret['s2s_acquirers'].remove(i)
-#         return ret

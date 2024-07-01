@@ -8,9 +8,8 @@
 # License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
 
 import base64
-from datetime import datetime, date
+from datetime import datetime
 from hashlib import sha1, sha256
-from dateutil.relativedelta import relativedelta
 import hmac
 import logging
 import math
@@ -32,6 +31,7 @@ from .language import PayzenLanguage
 from odoo.addons.payment import utils as payment_utils
 
 import urllib.parse as urlparse
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -98,14 +98,14 @@ class ProviderPayzen(models.Model):
     payzen_multi_period = fields.Char(string=_('Period'), help=_('Delay (in days) between installments.'))
     payzen_multi_first = fields.Char(string=_('1st installment'), help=_('Amount of first installment, in percentage of total amount. If empty, all installments will have the same amount.'))
 
-    is_for_payments_dd = fields.Boolean(string='Use for Payments Dropdown')
-
     environment = fields.Char()
+
+    support_recurring = fields.Boolean(string='Supports Recurring Payments')
 
     payzen_redirect = False
 
     @api.model
-    def _get_compatible_providers(self, *args, currency_id=None, **kwargs):
+    def _get_compatible_providers(self, *args, currency_id=None, sale_order_id=None, **kwargs):
         """ Override of payment to unlist PayZen providers when the currency is not supported. """
         providers = super()._get_compatible_providers(*args, currency_id=currency_id, **kwargs)
 
@@ -114,6 +114,15 @@ class ProviderPayzen(models.Model):
             providers = providers.filtered(
                 lambda p: p.code not in ['payzen', 'payzenmulti']
             )
+
+        # if there's a specific provider set on SO for recurring payments, allow only that one
+        if (
+            sale_order_id
+            and (sale_order := self.env['sale.order'].browse(sale_order_id).exists())
+            and sale_order.recurring_payment_provider_id
+            and sale_order.recurring_payment_provider_id in providers
+        ):
+            return sale_order.recurring_payment_provider_id.sudo()
 
         return providers
 
@@ -185,9 +194,7 @@ class ProviderPayzen(models.Model):
             _logger.error('The plugin cannot find a numeric code for the current shop currency {}.'.format(currency.name))
             raise ValidationError(_('The shop currency {} is not supported.').format(currency.name))
 
-        # Amount in cents.
-        k = int(currency.decimal_places)
-        amount = int(float_round(float_round(values['amount'], k) * (10 ** k), 0))
+        amount = tools.amount_in_cents(values['amount'], currency)
 
         # List of available languages.
         available_languages = ''
@@ -205,23 +212,20 @@ class ProviderPayzen(models.Model):
         # Enable redirection?
         ProviderPayzen.payzen_redirect = True if str(self.payzen_redirect_enabled) == '1' else False
 
-        reference = values.get('reference')
-        if not reference:
-            raise ValidationError('Missing value for "reference"')
-        reference = str(reference)
+        order_id = re.sub("[^0-9a-zA-Z_-]+", "", values.get('reference'))
 
         tx_values = dict() # Values to sign in unicode.
         tx_values.update({
             'vads_site_id': self.payzen_site_id,
             'vads_amount': str(amount),
-            'vads_sub_desc': u'',
-            'vads_sub_amount': u'',
-            'vads_sub_effect_date': u'',
+            'vads_sub_desc': '',
+            'vads_sub_amount': '',
+            'vads_sub_effect_date': '',
             'vads_currency': currency_num,
             'vads_sub_currency': currency_num,
             'vads_trans_date': str(datetime.utcnow().strftime("%Y%m%d%H%M%S")),
-            'vads_sub_init_amount_number': u'',
-            'vads_sub_init_amount': u'',
+            'vads_sub_init_amount_number': '',
+            'vads_sub_init_amount': '',
             'vads_trans_id': str(trans_id),
             'vads_ctx_mode': str(self._get_ctx_mode()),
             'vads_page_action': u'PAYMENT',
@@ -229,7 +233,7 @@ class ProviderPayzen(models.Model):
             'vads_payment_config': self._get_payment_config(amount),
             'vads_version': constants.PAYZEN_PARAMS.get('GATEWAY_VERSION'),
             'vads_url_return': urlparse.urljoin(base_url, PayzenController._return_url),
-            'vads_order_id': reference,
+            'vads_order_id': str(order_id),
             'vads_ext_info_order_ref': str(values.get('reference')),
             'vads_contrib': constants.PAYZEN_PARAMS.get('CMS_IDENTIFIER') + u'_' + constants.PAYZEN_PARAMS.get('PLUGIN_VERSION') + u'/' + release.version,
 
@@ -241,14 +245,6 @@ class ProviderPayzen(models.Model):
             'vads_return_mode': str(self.payzen_return_mode),
             'vads_threeds_mpi': threeds_mpi
         })
-
-        reference = reference[:reference.index('x') if 'x' in reference else len(reference)]
-        so = self.env['sale.order'].search([('name', '=', reference)], limit=1)
-        if so and so.payment_acquier_id:
-            if self.provider == 'payzenmulti':
-                tx_values = self._alter_with_so_data(tx_values, so, amount)
-            if so.partner_id.customer_nbr:
-                tx_values.update({'vads_cust_id': str(so.partner_id.customer_nbr)})
 
         if ProviderPayzen.payzen_redirect:
             tx_values.update({
@@ -294,58 +290,3 @@ class ProviderPayzen(models.Model):
             )
 
         return supported_currencies
-
-    def _alter_with_so_data(self, tx_values, so, amount):
-        has_first_payment = True
-        if not so.first_payment_amount and not so.first_payment_amount_mail:
-            has_first_payment = False
-
-        sec_date = so.second_payment_date or (so.date_order + relativedelta(months=+1)).date()
-        vads_sub_desc = 'RRULE:FREQ=MONTHLY;'
-        bymonthday = f'BYMONTHDAY={sec_date.day};'
-        if sec_date.day > 28:
-            bymonthday = u'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
-        vads_sub_desc += bymonthday
-        if has_first_payment:
-            vads_sub_desc += f'COUNT={int(self.payzen_multi_count) - 1};'
-            first_date = so.date_order
-            today = date.today()
-            capture_delay = abs((first_date.date() - today).days)
-            sub_effect_date = datetime.combine(sec_date, datetime.min.time())
-
-            if so.first_sub_payment_amount_mail:
-                tx_values.update({
-                    'vads_sub_init_amount_number': u'1',
-                    'vads_sub_init_amount': str(int(so.first_sub_payment_amount_mail * 100))
-                })
-            tx_values.update({
-                'vads_sub_desc': vads_sub_desc,
-                'vads_page_action': u'REGISTER_PAY_SUBSCRIBE',
-                'vads_amount': str(int(so.first_payment_amount_mail * 100)),
-                'vads_payment_config': u'SINGLE',
-                'vads_sub_amount': str(int(so.payzen_payment_monthly_amount * 100)),
-                'vads_sub_effect_date': sub_effect_date.strftime('%Y%m%d'),
-                'vads_capture_delay': str(capture_delay)
-            })
-        else:
-            vads_sub_desc += u'COUNT=' + str(self.payzen_multi_count) + u';'
-            if so.first_sub_payment_amount_mail:
-                tx_values.update({
-                    'vads_amount': str(int(so.first_sub_payment_amount_mail * 100)),
-                    'vads_sub_init_amount_number': u'1',
-                    'vads_sub_init_amount': str(int(so.first_sub_payment_amount_mail * 100))
-                })
-            else:
-                tx_values.update({
-                    'vads_amount': str(int(so.payzen_payment_monthly_amount * 100))
-                })
-            tx_values.update({
-                'vads_sub_desc': vads_sub_desc,
-                'vads_page_action': u'REGISTER_SUBSCRIBE',
-                'vads_sub_amount': str(int(so.payzen_payment_monthly_amount * 100)),
-                'vads_sub_effect_date': so.date_order.strftime('%Y%m%d')
-            })
-
-        _logger.info('tx_values : ')
-        _logger.info(tx_values)
-        return tx_values

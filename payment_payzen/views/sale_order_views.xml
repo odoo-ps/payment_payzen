@@ -1,115 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <data>
-        <record id="sale_view_form_custo" model="ir.ui.view">
-            <field name="name">sale.view.form.custo</field>
-            <field name="model">sale.order</field>
-            <field name="priority">999</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="payment_acquier_id" domain="[('is_for_payments_dd', '=', True)]"/>
-                    <field name="second_payment_date"/>
-                    <field name="first_payment_amount"/>
-                </xpath>
-                <xpath expr="//field[@name='date_order']" position="attributes">
-                    <attribute name="groups"/>
-                </xpath>
-                <xpath expr="//div[label[@for='date_order']]" position="attributes">
-                    <attribute name="groups"/>
-                </xpath>
-            </field>
-        </record>
-
-        <record id="sale_mail_template_payzen_info" model="mail.template">
-            <field name="name">Sale Order - Send By Mail (Payzen info)</field>
-            <field name="model_id" ref="model_sale_order"/>
-            <field name="body_html">
-<![CDATA[
-<p>Cher ${object.partner_id.name}
-% set access_action = object.with_context(force_website=True).get_access_action()
-% set is_online = access_action and access_action['type'] == 'ir.actions.act_url'
-% set doc_name = 'quotation' if object.state in ('draft', 'sent') else 'order confirmation'
-% set share_url = object.get_mail_url()
-% set base_url = object.get_base_url()
-% set access_url = is_online and share_url and base_url + share_url or ''
-
-
-% if object.partner_id.parent_id:
-    (<i>${object.partner_id.parent_id.name}</i>)
-% endif
-,</p>
-<p>
-Vous trouverez ci-dessous  les détails de
-% if ctx.get('proforma')
- votre facture pro-forma
-% else
-votre commande  <strong>${object.name}</strong>
-% endif
-pour un montant total de <strong>${format_amount(object.amount_total, object.currency_id)}</strong> 
-% if not object.payment_acquier_id.provider == 'payzenmulti':
- le ${format_date(object.date_order)} 
-% endif
-auprès de ${object.company_id.name}.
-</p>
-
-<p>
-% if object.payment_acquier_id and object.payment_acquier_id.provider == 'payzenmulti':
-    % if object.payment_acquier_id.payzen_multi_count:
-        Payable en ${object.payment_acquier_id.payzen_multi_count} fois<br>
-    % endif
-    % if object.first_payment_amount or object.first_payment_amount_mail
-        Premier paiement de
-        ${format_amount(object.first_payment_amount_mail, object.currency_id)}
-        le ${format_date(object.date_order)}<br>
-        % if object.first_sub_payment_amount_mail
-            La première mensualité sera de ${format_amount(object.first_sub_payment_amount_mail, object.currency_id)} pour faire la balance, 
-            % if object.second_payment_date:
-                le ${format_date(object.second_payment_date)}<br>
-            % endif
-            Ensuite, paiments de ${format_amount((object.payzen_payment_monthly_amount), object.currency_id)}
-        % else
-        Prochain paiement de ${format_amount((object.payzen_payment_monthly_amount), object.currency_id)}
-            % if object.second_payment_date:
-                le ${format_date(object.second_payment_date)}<br>
-            % endif
-        % endif
-    % else
-        Avec des paiements à hauteur de ${format_amount((object.payzen_payment_monthly_amount), object.currency_id)} <br/>
-        % if object.first_sub_payment_amount_mail
-            La première mensualité sera de ${format_amount(object.first_sub_payment_amount_mail, object.currency_id)} pour faire la balance, 
-            % if object.second_payment_date:
-                le ${format_date(object.second_payment_date)}<br>
-            % endif
-            Ensuite, paiments de ${format_amount((object.payzen_payment_monthly_amount), object.currency_id)}
-        % else
-        Prochain paiement de ${format_amount((object.payzen_payment_monthly_amount), object.currency_id)}
-            % if object.second_payment_date:
-                le ${format_date(object.second_payment_date)}<br>
-            % endif
-        % endif
-    % endif
-% endif
-</p>
-
-% if is_online and not ctx.get('proforma'):
-    <br><br>
-    <center>
-        <a href="${access_url}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">Je règle en ligne</a>
-        <br><br><br>
-        <span style="color:#888888">(Devis en pièce-jointe)</span>
-    </center>
-    <br>
-% endif
-
-
-<p style="color:#888888;">
-% if object.user_id and object.user_id.signature:
-    ${object.user_id.signature | safe}
-% endif
-</p>
-]]>
-            </field>
-        </record>
-    </data>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form.custo.recurring.payments</field>
+        <field name="model">sale.order</field>
+        <field name="priority">999</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="recurring_payment_provider_id" domain="[('support_recurring', '=', True)]"/>
+                <field name="recurring_first_payment_amount"/>
+                <field name="recurring_second_payment_date"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

@@ -42,6 +42,14 @@
                 <input type="hidden" name="vads_redirect_error_message" t-att-value="vads_redirect_error_message" />
             </t>
 
+            <!-- Recurring payments info. -->
+            <input type="hidden" name="vads_sub_desc" t-att-value="vads_sub_desc"/>
+            <input type="hidden" name="vads_sub_amount" t-att-value="vads_sub_amount"/>
+            <input type="hidden" name="vads_sub_effect_date" t-att-value="vads_sub_effect_date"/>
+            <input type="hidden" name="vads_sub_currency" t-att-value="vads_sub_currency"/>
+            <input type="hidden" name="vads_sub_init_amount_number" t-att-value="vads_sub_init_amount_number"/>
+            <input type="hidden" name="vads_sub_init_amount" t-att-value="vads_sub_init_amount"/>
+
             <!-- Customer info. -->
             <input type="hidden" name="vads_cust_id" t-att-value="vads_cust_id" />
             <input type="hidden" name="vads_cust_first_name" t-att-value="vads_cust_first_name" />
@@ -64,13 +72,7 @@
             <input type="hidden" name="vads_ship_to_country" t-att-value="vads_ship_to_country" />
             <input type="hidden" name="vads_ship_to_phone_num" t-att-value="vads_ship_to_phone_num" />
 
-            <input type="hidden" name="vads_sub_desc" t-att-value="vads_sub_desc"/>
-            <input type="hidden" name="vads_sub_amount" t-att-value="vads_sub_amount"/>
-            <input type="hidden" name="vads_sub_effect_date" t-att-value="vads_sub_effect_date"/>
-            <input type="hidden" name="vads_sub_currency" t-att-value="vads_sub_currency"/>
-            <input type="hidden" name="vads_sub_init_amount_number" t-att-value="vads_sub_init_amount_number"/>
-            <input type="hidden" name="vads_sub_init_amount" t-att-value="vads_sub_init_amount"/>
-            <!-- URLs. -->
+            <!-- URLs. --> 
             <input type="hidden" name="vads_url_return" t-att-value="vads_url_return" />
         </form>
     </template>

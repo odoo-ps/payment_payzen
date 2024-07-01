@@ -7,9 +7,10 @@
 # Copyright: Copyright © Lyra Network
 # License:   http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL v3)
 
-from datetime import datetime
+from datetime import datetime, date
 import logging
 import math
+from dateutil.relativedelta import relativedelta
 
 from odoo import models, api, release, fields, _
 from odoo.addons.payment import utils as payment_utils
@@ -69,6 +70,16 @@ class TransactionPayzen(models.Model):
             'vads_cust_phone': self.partner_phone and self.partner_phone[0:31] or '',
         })
 
+        if self.sale_order_ids.recurring_payment_provider_id:
+            if len(self.sale_order_ids) > 1:
+                raise ValidationError(_("Unsupported recurring payment transaction (%s) with multiple sale orders: %s") % (self, self.sale_order_ids))
+            if self.sale_order_ids.recurring_payment_provider_id != self.provider_id:
+                raise ValidationError(_("Recurring payment transaction (%s) provider doesn't match sale order provider: %s") % (self, self.sale_order_ids.recurring_payment_provider_id))
+            if not self.provider_id.support_recurring:
+                raise ValidationError(_("Payment transaction (%s) with sale order with recurring payment provider set, but provider does not support recurring payments: %s") % (self, self.provider_id))
+
+            values = self._payzen_set_recurring_values(values, self.sale_order_ids)
+
         # Set shipping info.
         try:
             shipping_address = self.sale_order_ids[0].partner_shipping_id
@@ -104,6 +115,63 @@ class TransactionPayzen(models.Model):
 
         values['payzen_signature'] = self.provider_id._payzen_generate_sign(self, values)
         values['api_url'] = self.provider_id.payzen_get_form_action_url()
+        return values
+
+    def _payzen_set_recurring_values(self, values, sale_order):
+        sale_order.ensure_one()
+
+        currency = values.get('currency', self.env['res.currency'].browse(values['currency_id'])).exists()
+
+        # FIXME: N.B. currently _compute_payments_amounts code in sale order will *always* set a first payment,
+        #        always resulting here in an immediate payment
+        #        -> double checked in db data after 6ee6567f fix was merged
+        first_payment_nonzero = bool(sale_order.recurring_first_payment_amount_mail)
+
+        first_date = sale_order.date_order.date()
+        second_date = (sale_order.recurring_second_payment_date or (first_date + relativedelta(months=+1)).date())
+
+        vads_sub_desc_values = {
+            "RRULE:FREQ": "MONTHLY",
+            "BYMONTHDAY": str(second_date.day),
+            "BYSETPOS": None,  # already set here for serialization order
+            "COUNT": str(sale_order.recurring_payment_months - (1 if first_payment_nonzero else 0)),
+        }
+        if second_date.day > 28:
+            vads_sub_desc_values["BYMONTHDAY"] = "28,29,30,31"
+            vads_sub_desc_values["BYSETPOS"] = "-1"
+        vads_sub_desc = "".join(f"{k}={v};" for k, v in vads_sub_desc_values.items() if v is not None)
+
+        # different amount for first N installments (used to recover rounding differences on 2nd payment)
+        sub_init_vals = {}
+        if sale_order.recurring_second_payment_amount_mail != sale_order.recurring_payment_monthly_amount:
+            values.update({
+                'vads_sub_init_amount_number': '1',
+                'vads_sub_init_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount_mail, currency))
+            })
+
+        # immediate first payment if non-zero
+        if first_payment_nonzero:
+            values.update({
+                'vads_sub_desc': vads_sub_desc,
+                'vads_page_action': 'REGISTER_PAY_SUBSCRIBE',
+                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_first_payment_amount_mail, currency)),
+                'vads_payment_config': 'SINGLE',
+                'vads_sub_amount': str(tools.amount_in_cents(sale_order.recurring_payment_monthly_amount, currency)),
+                'vads_sub_effect_date': second_date.strftime('%Y%m%d'),
+                'vads_capture_delay': str((first_date - date.today()).days),
+                **sub_init_vals,
+            })
+        else:
+            assert sale_order.recurring_first_payment_amount_mail == 0
+            values.update({
+                'vads_sub_desc': vads_sub_desc,
+                'vads_page_action': 'REGISTER_SUBSCRIBE',
+                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount_mail, currency)),
+                'vads_sub_amount': str(tools.amount_in_cents(sale_order.payzen_payment_monthly_amount, currency)),
+                'vads_sub_effect_date': first_date.strftime('%Y%m%d'),
+                **sub_init_vals,
+            })
+
         return values
 
     def _payzen_get_tx_from_notification_data(self, notification_data):
