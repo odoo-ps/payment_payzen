@@ -17,12 +17,12 @@
     'license': 'AGPL-3',
     'depends': ['payment', 'sale_management', 'sale', 'purchase', 'website_sale', 'product', 'ascor_training'],
     'data': [
-        'views/payment_views.xml',
+        'views/payment_provider_views.xml',
         'views/payment_payzen_templates.xml',
         'views/sale_order_views.xml',
         'views/product_template_views.xml',
         'templates/web_payment_template.xml',
-        'data/payment_acquirer_data.xml',
+        'data/payment_provider_data.xml',
         'security/ir.model.access.csv',
     ],
 

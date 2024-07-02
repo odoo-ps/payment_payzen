@@ -40,6 +40,6 @@
     </data>
 
     <function model="payment.acquirer" name="multi_add">
-        <value>/data/payment_acquirer_data_multi.xml</value>
+        <value>/data/payment_provider_data_multi.xml</value>
     </function>
 </odoo>

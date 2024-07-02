@@ -72,6 +72,6 @@
     </data>
 
     <function model="payment.acquirer" name="multi_add">
-        <value>/views/payment_views_multi.xml</value>
+        <value>/views/payment_provider_views_multi.xml</value>
     </function>
 </odoo>
