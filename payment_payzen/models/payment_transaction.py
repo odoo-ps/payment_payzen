@@ -125,7 +125,7 @@ class TransactionPayzen(models.Model):
         # FIXME: N.B. currently _compute_payments_amounts code in sale order will *always* set a first payment,
         #        always resulting here in an immediate payment
         #        -> double checked in db data after 6ee6567f fix was merged
-        first_payment_nonzero = bool(sale_order.recurring_first_payment_amount_mail)
+        first_payment_nonzero = bool(sale_order.recurring_first_payment_amount)
 
         first_date = sale_order.date_order.date()
         second_date = (sale_order.recurring_second_payment_date or (first_date + relativedelta(months=+1)).date())
@@ -143,10 +143,10 @@ class TransactionPayzen(models.Model):
 
         # different amount for first N installments (used to recover rounding differences on 2nd payment)
         sub_init_vals = {}
-        if sale_order.recurring_second_payment_amount_mail != sale_order.recurring_payment_monthly_amount:
+        if sale_order.recurring_second_payment_amount != sale_order.recurring_payment_monthly_amount:
             values.update({
                 'vads_sub_init_amount_number': '1',
-                'vads_sub_init_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount_mail, currency))
+                'vads_sub_init_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount, currency))
             })
 
         # immediate first payment if non-zero
@@ -154,7 +154,7 @@ class TransactionPayzen(models.Model):
             values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': 'REGISTER_PAY_SUBSCRIBE',
-                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_first_payment_amount_mail, currency)),
+                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_first_payment_amount, currency)),
                 'vads_payment_config': 'SINGLE',
                 'vads_sub_amount': str(tools.amount_in_cents(sale_order.recurring_payment_monthly_amount, currency)),
                 'vads_sub_effect_date': second_date.strftime('%Y%m%d'),
@@ -162,11 +162,11 @@ class TransactionPayzen(models.Model):
                 **sub_init_vals,
             })
         else:
-            assert sale_order.recurring_first_payment_amount_mail == 0
+            assert sale_order.recurring_first_payment_amount == 0
             values.update({
                 'vads_sub_desc': vads_sub_desc,
                 'vads_page_action': 'REGISTER_SUBSCRIBE',
-                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount_mail, currency)),
+                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount, currency)),
                 'vads_sub_amount': str(tools.amount_in_cents(sale_order.payzen_payment_monthly_amount, currency)),
                 'vads_sub_effect_date': first_date.strftime('%Y%m%d'),
                 **sub_init_vals,

@@ -34,9 +34,9 @@
                     Payable en <t t-out="object.recurring_payment_months"/> fois
                     <br/>
                 </t>
-                <t t-if="object.recurring_first_payment_amount_mail">
+                <t t-if="object.recurring_first_payment_amount">
                     Premier paiement de
-                    <t t-out="format_amount(object.recurring_first_payment_amount_mail, object.currency_id)"/>
+                    <t t-out="format_amount(object.recurring_first_payment_amount, object.currency_id)"/>
                     le
                     <t t-out="format_date(object.date_order)"/>
                 </t>
@@ -45,9 +45,9 @@
                     <t t-out="format_amount(object.recurring_payment_monthly_amount, object.currency_id)"/>
                 </t>
                 <br/>
-                <t t-if="object.recurring_second_payment_amount_mail">
+                <t t-if="object.recurring_second_payment_amount">
                     La première mensualité sera de
-                    <t t-out="format_amount(object.recurring_second_payment_amount_mail, object.currency_id)"/>
+                    <t t-out="format_amount(object.recurring_second_payment_amount, object.currency_id)"/>
                     pour faire la balance,
                     <t t-if="object.recurring_second_payment_date">
                         le
