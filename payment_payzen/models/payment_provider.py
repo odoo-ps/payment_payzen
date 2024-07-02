@@ -14,32 +14,29 @@ from dateutil.relativedelta import relativedelta
 import hmac
 import logging
 import math
-import re
 from os import path
 
 from pkg_resources import parse_version
 
 from odoo import models, api, release, fields, _
-from odoo.addons.payment.models.payment_acquirer import ValidationError
+from odoo.exceptions import ValidationError
 from odoo.tools import convert_xml_import
 from odoo.tools import float_round
 from odoo.tools.float_utils import float_compare
+from odoo.http import request
 
 from ..controllers.main import PayzenController
 from ..helpers import constants, tools
 from .card import PayzenCard
 from .language import PayzenLanguage
+from odoo.addons.payment import utils as payment_utils
 
-
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
+import urllib.parse as urlparse
 
 _logger = logging.getLogger(__name__)
 
-class AcquirerPayzen(models.Model):
-    _inherit = 'payment.acquirer'
+class ProviderPayzen(models.Model):
+    _inherit = 'payment.provider'
 
     def _get_notify_url(self):
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
@@ -49,33 +46,34 @@ class AcquirerPayzen(models.Model):
         languages = constants.PAYZEN_LANGUAGES
         return [(c, _(l)) for c, l in languages.items()]
 
-    @api.depends('provider')
     def _payzen_compute_multi_warning(self):
-        for acquirer in self:
-            acquirer.payzen_multi_warning = (constants.PAYZEN_PLUGIN_FEATURES.get('restrictmulti') == True) if (acquirer.provider == 'payzenmulti') else False
+        for provider in self:
+            provider.payzen_multi_warning = (constants.PAYZEN_PLUGIN_FEATURES.get('restrictmulti') == True) if (provider.code == 'payzenmulti') else False
+
+    def payzen_get_doc_field_value():
+        docs_uri = constants.PAYZEN_ONLINE_DOC_URI
+        doc_field_html = ''
+        for lang, doc_uri in docs_uri.items():
+            html = '<a href="%s%s">%s</a> '%(doc_uri,'odoo16/sitemap.html', constants.PAYZEN_DOCUMENTATION.get(lang))
+            doc_field_html += html
+
+        return doc_field_html
 
     sign_algo_help = _('Algorithm used to compute the payment form signature. Selected algorithm must be the same as one configured in the PayZen Back Office.')
 
     if constants.PAYZEN_PLUGIN_FEATURES.get('shatwo') == False:
         sign_algo_help += _('The HMAC-SHA-256 algorithm should not be activated if it is not yet available in the PayZen Back Office, the feature will be available soon.')
 
-    # Compatibility with Odoo 14.
-    payzen_odoo14 = parse_version(release.version) >= parse_version('14')
-
     providers = [('payzen', _('PayZen - Standard payment'))]
-    if payzen_odoo14:
-        ondelete_policy = {'payzen': 'set default'}
+    ondelete_policy = {'payzen': 'set default'}
 
     if constants.PAYZEN_PLUGIN_FEATURES.get('multi') == True:
         providers.append(('payzenmulti', _('PayZen - Payment in installments')))
-        if payzen_odoo14:
-            ondelete_policy['payzenmulti'] = 'set default'
+        ondelete_policy['payzenmulti'] = 'set default'
 
-    if payzen_odoo14:
-        provider = fields.Selection(selection_add=providers, ondelete = ondelete_policy)
-    else:
-        provider = fields.Selection(selection_add=providers)
+    code = fields.Selection(selection_add=providers, ondelete = ondelete_policy)
 
+    payzen_doc = fields.Html(string=_('Click to view the module configuration documentation'), default=payzen_get_doc_field_value(), readonly=True)
     payzen_site_id = fields.Char(string=_('Shop ID'), help=_('The identifier provided by PayZen.'), default=constants.PAYZEN_PARAMS.get('SITE_ID'))
     payzen_key_test = fields.Char(string=_('Key in test mode'), help=_('Key provided by PayZen for test mode (available in PayZen Back Office).'), default=constants.PAYZEN_PARAMS.get('KEY_TEST'), readonly=constants.PAYZEN_PLUGIN_FEATURES.get('qualif'))
     payzen_key_prod = fields.Char(string=_('Key in production mode'), help=_('Key provided by PayZen (available in PayZen Back Office after enabling production mode).'), default=constants.PAYZEN_PARAMS.get('KEY_PROD'))
@@ -87,7 +85,7 @@ class AcquirerPayzen(models.Model):
     payzen_capture_delay = fields.Char(string=_('Capture delay'), help=_('The number of days before the bank capture (adjustable in your PayZen Back Office).'))
     payzen_validation_mode = fields.Selection(string=_('Validation mode'), help=_('If manual is selected, you will have to confirm payments manually in your PayZen Back Office.'), selection=[('-1', _('PayZen Back Office Configuration')), ('0', _('Automatic')), ('1', _('Manual'))])
     payzen_payment_cards = fields.Many2many('payzen.card', string=_('Card types'), column1='code', column2='label', help=_('The card type(s) that can be used for the payment. Select none to use gateway configuration.'))
-    payzen_threeds_min_amount = fields.Char(string=_('Disable 3DS'), help=_('Amount below which 3DS will be disabled. Needs subscription to selective 3DS option. For more information, refer to the module documentation.'))
+    payzen_threeds_min_amount = fields.Char(string=_('Manage 3DS'), help=_('Amount below which customer could be exempt from strong authentication. Needs subscription to «Selective 3DS1» or «Frictionless 3DS2» options. For more information, refer to the module documentation.'))
     payzen_redirect_enabled = fields.Selection(string=_('Automatic redirection'), help=_('If enabled, the buyer is automatically redirected to your site at the end of the payment.'), selection=[('0', _('Disabled')), ('1', _('Enabled'))])
     payzen_redirect_success_timeout = fields.Char(string=_('Redirection timeout on success'), help=_('Time in seconds (0-300) before the buyer is automatically redirected to your website after a successful payment.'))
     payzen_redirect_success_message = fields.Char(string=_('Redirection message on success'), help=_('Message displayed on the payment page prior to redirection after a successful payment.'), default=_('Redirection to shop in a few seconds...'))
@@ -96,43 +94,44 @@ class AcquirerPayzen(models.Model):
     payzen_return_mode = fields.Selection(string=_('Return mode'), help=_('Method that will be used for transmitting the payment result from the payment page to your shop.'), selection=[('GET', 'GET'), ('POST', 'POST')])
     payzen_multi_warning = fields.Boolean(compute='_payzen_compute_multi_warning')
 
-    payzen_multi_count = fields.Char(string=_('Count'), help=_('Total number of payments.'))
-    payzen_multi_period = fields.Char(string=_('Period'), help=_('Delay (in days) between payments.'))
-    payzen_multi_first = fields.Char(string=_('1st payment'), help=_('Amount of first payment, in percentage of total amount. If empty, all payments will have the same amount.'))
+    payzen_multi_count = fields.Char(string=_('Count'), help=_('Installments number'))
+    payzen_multi_period = fields.Char(string=_('Period'), help=_('Delay (in days) between installments.'))
+    payzen_multi_first = fields.Char(string=_('1st installment'), help=_('Amount of first installment, in percentage of total amount. If empty, all installments will have the same amount.'))
 
     is_for_payments_dd = fields.Boolean(string='Use for Payments Dropdown')
-    
-    # Check if it's Odoo 10.
-    payzen_odoo10 = True if parse_version(release.version) < parse_version('11') else False
 
-    # Compatibility betwen Odoo 13 and previous versions.
-    payzen_odoo13 = True if parse_version(release.version) >= parse_version('13') else False
-
-    if payzen_odoo13:
-        image = fields.Char()
-        environment = fields.Char()
-    else:
-        image_128 = fields.Char()
-        state = fields.Char()
+    environment = fields.Char()
 
     payzen_redirect = False
 
     @api.model
-    def multi_add(self, filename):
-        file = path.join(path.dirname(path.dirname(path.abspath(__file__)))) + filename
+    def _get_compatible_providers(self, *args, currency_id=None, **kwargs):
+        """ Override of payment to unlist PayZen providers when the currency is not supported. """
+        providers = super()._get_compatible_providers(*args, currency_id=currency_id, **kwargs)
 
+        currency = self.env['res.currency'].browse(currency_id).exists()
+        if currency and currency.name and tools.find_currency(currency.name) is None:
+            providers = providers.filtered(
+                lambda p: p.code not in ['payzen', 'payzenmulti']
+            )
+
+        return providers
+
+    @api.model
+    def multi_add(self, filename):
         if (constants.PAYZEN_PLUGIN_FEATURES.get('multi') == True):
-            convert_xml_import(self._cr, 'payment_payzen', file)
+            file = path.join(path.dirname(path.dirname(path.abspath(__file__)))) + filename
+            convert_xml_import(self.env, 'payment_payzen', file)
 
         return None
 
     def _get_ctx_mode(self):
-        ctx_key = self.state if self.payzen_odoo13 else self.environment
+        ctx_key = self.state
         ctx_value = 'TEST' if ctx_key == 'test' else 'PRODUCTION'
 
         return ctx_value
 
-    def _payzen_generate_sign(self, acquirer, values):
+    def _payzen_generate_sign(self, provider, values):
         key = self.payzen_key_prod if self._get_ctx_mode() == 'PRODUCTION' else self.payzen_key_test
 
         sign = ''
@@ -150,7 +149,7 @@ class AcquirerPayzen(models.Model):
         return shasign
 
     def _get_payment_config(self, amount):
-        if self.provider == 'payzenmulti':
+        if self.code == 'payzenmulti':
             if (self.payzen_multi_first):
                 first = int(float(self.payzen_multi_first) / 100 * int(amount))
             else:
@@ -163,7 +162,7 @@ class AcquirerPayzen(models.Model):
         return payment_config
 
     def payzen_form_generate_values(self, values):
-        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        base_url = request.httprequest.host_url
 
         # trans_id is the number of 1/10 seconds from midnight.
         now = datetime.now()
@@ -176,13 +175,18 @@ class AcquirerPayzen(models.Model):
             threeds_mpi = u'2'
 
         # Check currency.
-        currency_num = tools.find_currency(values['currency'].name)
+        if 'currency' in values:
+            currency = values['currency']
+        else:
+            currency = self.env['res.currency'].browse(values['currency_id']).exists()
+
+        currency_num = tools.find_currency(currency.name)
         if currency_num is None:
-            _logger.error('The plugin cannot find a numeric code for the current shop currency {}.'.format(values['currency'].name))
-            raise ValidationError(_('The shop currency {} is not supported.').format(values['currency'].name))
+            _logger.error('The plugin cannot find a numeric code for the current shop currency {}.'.format(currency.name))
+            raise ValidationError(_('The shop currency {} is not supported.').format(currency.name))
 
         # Amount in cents.
-        k = int(values['currency'].decimal_places)
+        k = int(currency.decimal_places)
         amount = int(float_round(float_round(values['amount'], k) * (10 ** k), 0))
 
         # List of available languages.
@@ -195,15 +199,15 @@ class AcquirerPayzen(models.Model):
         for value in self.payzen_payment_cards:
             payment_cards += value.code + ';'
 
-        #Validation mode
+        # Validation mode.
         validation_mode = self.payzen_validation_mode if self.payzen_validation_mode != '-1' else ''
 
         # Enable redirection?
-        AcquirerPayzen.payzen_redirect = str(self.payzen_redirect_enabled) == '1'
+        ProviderPayzen.payzen_redirect = True if str(self.payzen_redirect_enabled) == '1' else False
 
         reference = values.get('reference')
         if not reference:
-            raise ValidationError('Missing value for "reference"') 
+            raise ValidationError('Missing value for "reference"')
         reference = str(reference)
 
         tx_values = dict() # Values to sign in unicode.
@@ -225,8 +229,8 @@ class AcquirerPayzen(models.Model):
             'vads_payment_config': self._get_payment_config(amount),
             'vads_version': constants.PAYZEN_PARAMS.get('GATEWAY_VERSION'),
             'vads_url_return': urlparse.urljoin(base_url, PayzenController._return_url),
-            # 'vads_order_id': re.sub('[^a-zA-Z0-9\-]', '', reference),
             'vads_order_id': reference,
+            'vads_ext_info_order_ref': str(values.get('reference')),
             'vads_contrib': constants.PAYZEN_PARAMS.get('CMS_IDENTIFIER') + u'_' + constants.PAYZEN_PARAMS.get('PLUGIN_VERSION') + u'/' + release.version,
 
             'vads_language': self.payzen_language or '',
@@ -235,31 +239,9 @@ class AcquirerPayzen(models.Model):
             'vads_validation_mode': validation_mode,
             'vads_payment_cards': payment_cards,
             'vads_return_mode': str(self.payzen_return_mode),
-            'vads_threeds_mpi': threeds_mpi,
-
-            # Customer info.
-            'vads_cust_id': str(values.get('billing_partner_id')) or '',
-            'vads_cust_first_name': values.get('billing_partner_first_name') and values.get('billing_partner_first_name')[0:62] or '',
-            'vads_cust_last_name': values.get('billing_partner_last_name') and values.get('billing_partner_last_name')[0:62] or '',
-            'vads_cust_address': values.get('billing_partner_address') and values.get('billing_partner_address')[0:254] or '',
-            'vads_cust_zip': values.get('billing_partner_zip') and values.get('billing_partner_zip')[0:62] or '',
-            'vads_cust_city': values.get('billing_partner_city') and values.get('billing_partner_city')[0:62] or '',
-            'vads_cust_state': values.get('billing_partner_state').code and values.get('billing_partner_state').code[0:62] or '',
-            'vads_cust_country': values.get('billing_partner_country').code and values.get('billing_partner_country').code.upper() or '',
-            'vads_cust_email': values.get('billing_partner_email') and values.get('billing_partner_email')[0:126] or '',
-            'vads_cust_phone': values.get('billing_partner_phone') and values.get('billing_partner_phone')[0:31] or '',
-
-            # Shipping info.
-            'vads_ship_to_first_name': values.get('partner_first_name') and values.get('partner_first_name')[0:62] or '',
-            'vads_ship_to_last_name': values.get('partner_last_name') and values.get('partner_last_name')[0:62] or '',
-            'vads_ship_to_street': values.get('partner_address') and values.get('partner_address')[0:254] or '',
-            'vads_ship_to_zip': values.get('partner_zip') and values.get('partner_zip')[0:62] or '',
-            'vads_ship_to_city': values.get('partner_city') and values.get('partner_city')[0:62] or '',
-            'vads_ship_to_state': values.get('partner_state').code and values.get('partner_state').code[0:62] or '',
-            'vads_ship_to_country': values.get('partner_country').code and values.get('partner_country').code.upper() or '',
-            'vads_ship_to_phone_num': values.get('partner_phone') and values.get('partner_phone')[0:31] or '',
+            'vads_threeds_mpi': threeds_mpi
         })
-        
+
         reference = reference[:reference.index('x') if 'x' in reference else len(reference)]
         so = self.env['sale.order'].search([('name', '=', reference)], limit=1)
         if so and so.payment_acquier_id:
@@ -268,7 +250,7 @@ class AcquirerPayzen(models.Model):
             if so.partner_id.customer_nbr:
                 tx_values.update({'vads_cust_id': str(so.partner_id.customer_nbr)})
 
-        if AcquirerPayzen.payzen_redirect:
+        if ProviderPayzen.payzen_redirect:
             tx_values.update({
                 'vads_redirect_success_timeout': self.payzen_redirect_success_timeout or '',
                 'vads_redirect_success_message': self.payzen_redirect_success_message or '',
@@ -284,17 +266,34 @@ class AcquirerPayzen(models.Model):
 
             payzen_tx_values[key] = tx_values[key].encode('utf-8')
 
-        payzen_tx_values['payzen_signature'] = self._payzen_generate_sign(self, tx_values)
         return payzen_tx_values
-
-    def payzenmulti_form_generate_values(self, values):
-        return self.payzen_form_generate_values(values)
 
     def payzen_get_form_action_url(self):
         return self.payzen_gateway_url
 
-    def payzenmulti_get_form_action_url(self):
-        return self.payzen_gateway_url
+    def _get_default_payment_method_codes(self):
+        if self.code != 'payzen' and self.code != 'payzenmulti':
+            return super()._get_default_payment_method_codes()
+
+        return self.code
+
+    def get_payzen_currencies(self):
+        first_elements = []
+        for currency in constants.PAYZEN_CURRENCIES:
+            first_element = currency[0]
+            first_elements.append(first_element)
+
+        return first_elements
+
+    def _get_supported_currencies(self):
+        """ Override of `payment` to return the supported currencies. """
+        supported_currencies = super()._get_supported_currencies()
+        if self.code in ['payzen', 'payzenmulti']:
+            supported_currencies = supported_currencies.filtered(
+                lambda c: c.name in self.get_payzen_currencies()
+            )
+
+        return supported_currencies
 
     def _alter_with_so_data(self, tx_values, so, amount):
         has_first_payment = True
@@ -308,7 +307,7 @@ class AcquirerPayzen(models.Model):
             bymonthday = u'BYMONTHDAY=28,29,30,31;BYSETPOS=-1;'
         vads_sub_desc += bymonthday
         if has_first_payment:
-            vads_sub_desc += f'COUNT={int(self.payzen_multi_count)-1};'
+            vads_sub_desc += f'COUNT={int(self.payzen_multi_count) - 1};'
             first_date = so.date_order
             today = date.today()
             capture_delay = abs((first_date.date() - today).days)
@@ -346,7 +345,7 @@ class AcquirerPayzen(models.Model):
                 'vads_sub_amount': str(int(so.payzen_payment_monthly_amount * 100)),
                 'vads_sub_effect_date': so.date_order.strftime('%Y%m%d')
             })
-        
+
         _logger.info('tx_values : ')
         _logger.info(tx_values)
         return tx_values

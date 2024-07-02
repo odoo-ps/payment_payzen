@@ -20,24 +20,24 @@ msgstr ""
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_multi_first
 #, python-format
 msgid "1st installment"
-msgstr "Primer vencimiento"
+msgstr "1st installment"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_transaction__payzen_html_3ds
 msgid "3D Secure HTML"
-msgstr ""
+msgstr "3D Secure HTML"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #, python-format
 msgid "3DS authentication: "
-msgstr "Autenticación 3DS: "
+msgstr "3DS authentication: "
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #, python-format
 msgid "3DS certificate: "
-msgstr "Certificado 3DS: "
+msgstr "3DS certificate: "
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzenmulti
@@ -45,8 +45,8 @@ msgid ""
 "ATTENTION: The payment in installments feature activation is subject to the "
 "prior agreement of Société Générale."
 msgstr ""
-"ATENCIÓN: La activación de la función de pago en cuotas está sujeta al "
-"acuerdo previo de Societé Générale."
+"ATTENTION: The payment in installments feature activation is subject to the "
+"prior agreement of Société Générale."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -56,9 +56,8 @@ msgid ""
 "Algorithm used to compute the payment form signature. Selected algorithm "
 "must be the same as one configured in the PayZen Back Office."
 msgstr ""
-"Algoritmo usado para calcular la firma del formulario de pago. El algoritmo "
-"seleccionado debe ser el mismo que el configurado en el Back Office Payzen "
-"Expert."
+"Algorithm used to compute the payment form signature. Selected algorithm "
+"must be the same as one configured in the PayZen Back Office."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -69,9 +68,9 @@ msgid ""
 "Needs subscription to «Selective 3DS1» or «Frictionless 3DS2» options. For "
 "more information, refer to the module documentation."
 msgstr ""
-"Monto por debajo del cual el comprador podría estar exento de de la autenticación "
-"fuerte. Requiere suscripción a la opción « Selective 3DS1 » o a la opción « Frictionless 3DS2 ». "
-"Para más información, consulte la documentación del módulo."
+"Amount below which customer could be exempt from strong authentication. "
+"Needs subscription to «Selective 3DS1» or «Frictionless 3DS2» options. For "
+"more information, refer to the module documentation."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -81,75 +80,75 @@ msgid ""
 "Amount of first installment, in percentage of total amount. If empty, all "
 "installments will have the same amount."
 msgstr ""
-"Monto del primer vencimiento, en porcentaje del monto total. Si está vacío, "
-"todos los vencimientos tendrán el mismo monto."
+"Amount of first installment, in percentage of total amount. If empty, all "
+"installments will have the same amount."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_transaction__payzen_auth_result
 #, python-format
 msgid "Authorization result"
-msgstr "Resultado de la autorizacion"
+msgstr "Authorization result"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_validation_mode__0
 #, python-format
 msgid "Automatic"
-msgstr "Automático"
+msgstr "Automatic"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_redirect_enabled
 #, python-format
 msgid "Automatic redirection"
-msgstr "Redirección automática"
+msgstr "Automatic redirection"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_available_languages
 #, python-format
 msgid "Available languages"
-msgstr "Idiomas disponibles"
+msgstr "Available languages"
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzen
 msgid "CUSTOM 3DS"
-msgstr "3DS PERSONALIZADO"
+msgstr "CUSTOM 3DS"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_capture_delay
 #, python-format
 msgid "Capture delay"
-msgstr "Plazo de captura"
+msgstr "Capture delay"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_transaction__payzen_card_number
 #, python-format
 msgid "Card number"
-msgstr "Número de tarjeta"
+msgstr "Card number"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_payment_cards
 #, python-format
 msgid "Card types"
-msgstr "Tipos de tarjeta"
+msgstr "Card types"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payzen_card__code
 #: model:ir.model.fields,field_description:payment_payzen.field_payzen_language__code
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_multi_count
 #, python-format
 msgid "Count"
-msgstr "Conteo"
+msgstr "Count"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payzen_card__create_uid
@@ -168,28 +167,28 @@ msgstr ""
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_language
 #, python-format
 msgid "Default language"
-msgstr "Idioma predeterminado"
+msgstr "Default language"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__payzen_language
 #, python-format
 msgid "Default language on the payment page."
-msgstr "Idioma predeterminado en la página de pago."
+msgstr "Default language on the payment page."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__payzen_multi_period
 #, python-format
 msgid "Delay (in days) between installments."
-msgstr "Plazo (en días) entre vencimientos."
+msgstr "Delay (in days) between installments."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_redirect_enabled__0
 #, python-format
 msgid "Disabled"
-msgstr "Deshabilitada"
+msgstr "Disabled"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payzen_card__display_name
@@ -202,7 +201,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_redirect_enabled__1
 #, python-format
 msgid "Enabled"
-msgstr "Habilitada"
+msgstr "Enabled"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__environment
@@ -214,7 +213,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_transaction__payzen_expiration_date
 #, python-format
 msgid "Expiration date"
-msgstr "Fecha de expiración"
+msgstr "Expiration date"
 
 #. module: payment_payzen
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_return_mode__get
@@ -240,8 +239,8 @@ msgid ""
 "If enabled, the buyer is automatically redirected to your site at the end of"
 " the payment."
 msgstr ""
-"Si está habilitada, el comprador es redirigido automáticamente a su sitio al"
-" final del pago."
+"If enabled, the buyer is automatically redirected to your site at the end of"
+" the payment."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -251,8 +250,8 @@ msgid ""
 "If manual is selected, you will have to confirm payments manually in your "
 "PayZen Back Office."
 msgstr ""
-"Si se selecciona manual, deberá confirmar los pagos manualmente en su Back "
-"Office PayZen."
+"If manual is selected, you will have to confirm payments manually in your "
+"PayZen Back Office."
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzenmulti
@@ -261,37 +260,37 @@ msgid ""
 "error 10000 – INSTALLMENTS_NOT_ALLOWED or 07 - PAYMENT_CONFIG will occur and"
 " the buyer will not be able to pay."
 msgstr ""
-"Si habilita esta función cuando no tiene la opción asociada, ocurrirá un "
-"error 10000 – INSTALLMENTS_NOT_ALLOWED o 07 - PAYMENT_CONFIG y el comprador "
-"no podrá pagar."
+"If you enable this feature while you have not the associated option, an "
+"error 10000 – INSTALLMENTS_NOT_ALLOWED or 07 - PAYMENT_CONFIG will occur and"
+" the buyer will not be able to pay."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__payzen_multi_count
 #, python-format
 msgid "Installments number"
-msgstr "Número de cuotas"
+msgstr "Installments number"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_notify_url
 #, python-format
 msgid "Instant Payment Notification URL"
-msgstr "URL de notificación de pago instantáneo"
+msgstr "Instant Payment Notification URL"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_key_prod
 #, python-format
 msgid "Key in production mode"
-msgstr "Clave en modo production"
+msgstr "Key in production mode"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_key_test
 #, python-format
 msgid "Key in test mode"
-msgstr "Clave en modo test"
+msgstr "Key in test mode"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -301,8 +300,8 @@ msgid ""
 "Key provided by PayZen (available in PayZen Back Office after "
 "enabling production mode)."
 msgstr ""
-"Clave proporcionada por PayZen (disponible en el Back Office Payzen "
-"Expert después de habilitar el modo production)."
+"Key provided by PayZen (available in PayZen Back Office after "
+"enabling production mode)."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -312,8 +311,8 @@ msgid ""
 "Key provided by PayZen for test mode (available in PayZen Back "
 "Office)."
 msgstr ""
-"Clave proporcionada por PayZen para modo test (disponible en el Back "
-"Office PayZen)."
+"Key provided by PayZen for test mode (available in PayZen Back "
+"Office)."
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payzen_card__label
@@ -329,8 +328,8 @@ msgid ""
 "Languages available on the payment page. If you do not select any, all the "
 "supported languages will be available."
 msgstr ""
-"Idiomas disponibles en la página de pago. Si no selecciona ninguno, todos "
-"los idiomas compatibles estarán disponibles."
+"Languages available on the payment page. If you do not select any, all the "
+"supported languages will be available."
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payzen_card____last_update
@@ -355,7 +354,7 @@ msgstr ""
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__payzen_gateway_url
 #, python-format
 msgid "Link to the payment page."
-msgstr "Enlace a la página de pago."
+msgstr ""
 
 #. module: payment_payzen
 #: model:account.payment.method,name:payment_payzen.payment_method_payzen
@@ -368,7 +367,7 @@ msgstr ""
 #: model:payment.acquirer,name:payment_payzen.payment_acquirer_payzenmulti
 #, python-format
 msgid "PayZen - Payment in installments"
-msgstr "PayZen - Pago en cuotas"
+msgstr "PayZen - Payment in installments"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -376,7 +375,7 @@ msgstr "PayZen - Pago en cuotas"
 #: model:payment.acquirer,name:payment_payzen.payment_acquirer_payzen
 #, python-format
 msgid "PayZen - Standard payment"
-msgstr "PayZen - Pago standard"
+msgstr "PayZen - Standard payment"
 
 #. module: payment_payzen
 #: model:account.payment.method,name:payment_payzen.payment_method_payzenmulti
@@ -398,7 +397,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_validation_mode__-1
 #, python-format
 msgid "PayZen Back Office Configuration"
-msgstr "Configuración de Back Office PayZen"
+msgstr ""
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_multi_warning
@@ -410,21 +409,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_threeds_min_amount
 #, python-format
 msgid "Manage 3DS"
-msgstr "Gestionar el 3DS"
+msgstr "Manage 3DS"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_validation_mode__1
 #, python-format
 msgid "Manual"
-msgstr ""
+msgstr "Manual"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_transaction__payzen_card_brand
 #, python-format
 msgid "Means of payment"
-msgstr "Medio de pago"
+msgstr "Means of payment"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -434,8 +433,8 @@ msgid ""
 "Message displayed on the payment page prior to redirection after a declined "
 "payment."
 msgstr ""
-"Mensaje mostrado en la página de pago antes de la redirección después de un "
-"pago rechazado."
+"Message displayed on the payment page prior to redirection after a declined "
+"payment."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -445,8 +444,8 @@ msgid ""
 "Message displayed on the payment page prior to redirection after a "
 "successful payment."
 msgstr ""
-"Mensaje mostrado en la página de pago antes de la redirección después de un "
-"pago exitoso."
+"Message displayed on the payment page prior to redirection after a "
+"successful payment."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -456,8 +455,8 @@ msgid ""
 "Method that will be used for transmitting the payment result from the "
 "payment page to your shop."
 msgstr ""
-"Método que se usará para transmitir el resultado del pago de la página de "
-"pago a su tienda."
+"Method that will be used for transmitting the payment result from the "
+"payment page to your shop."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
@@ -468,22 +467,22 @@ msgstr "NO"
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzen
 msgid "MODULE INFORMATION"
-msgstr "INFORMACIÓN DEL MÓDULO"
+msgstr "MODULE INFORMATION"
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzen
 msgid "PAYMENT GATEWAY ACCESS"
-msgstr "ACCESO AL PORTAL DE PAGO"
+msgstr "PAYMENT GATEWAY ACCESS"
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzenmulti
 msgid "PAYMENT OPTIONS"
-msgstr "OPCIONES DE PAGO"
+msgstr "PAYMENT OPTIONS"
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzen
 msgid "PAYMENT PAGE"
-msgstr "PÁGINA DE PAGO"
+msgstr "PAYMENT PAGE"
 
 #. module: payment_payzen
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_return_mode__post
@@ -493,82 +492,82 @@ msgstr ""
 #. module: payment_payzen
 #: model:ir.model,name:payment_payzen.model_payment_acquirer
 msgid "Payment Acquirer"
-msgstr "Método de Pago"
+msgstr ""
 
 #. module: payment_payzen
 #: model:ir.model,name:payment_payzen.model_account_payment_method
 msgid "Payment Methods"
-msgstr "Métodos de pago"
+msgstr ""
 
 #. module: payment_payzen
 #: model:ir.model,name:payment_payzen.model_payment_transaction
 msgid "Payment Transaction"
-msgstr "Transacción de pago"
+msgstr "Payment Transaction"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_gateway_url
 #, python-format
 msgid "Payment page URL"
-msgstr "URL de página de pago"
+msgstr "Payment page URL"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_multi_period
 #, python-format
 msgid "Period"
-msgstr "Periodo"
+msgstr "Period"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__provider
 msgid "Provider"
-msgstr "Proveedor"
+msgstr "Provider"
 
 #. module: payment_payzen
 #: model_terms:ir.ui.view,arch_db:payment_payzen.provider_form_payzen
 msgid "RETURN TO SHOP"
-msgstr "VOLVER A LA TIENDA"
+msgstr "RETURN TO SHOP"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_redirect_error_message
 #, python-format
 msgid "Redirection message on failure"
-msgstr "Mensaje de redirección en pago rechazado"
+msgstr "Redirection message on failure"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_redirect_success_message
 #, python-format
 msgid "Redirection message on success"
-msgstr "Mensaje de redirección en pago exitoso"
+msgstr "Redirection message on success"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_redirect_error_timeout
 #, python-format
 msgid "Redirection timeout on failure"
-msgstr "Tiempo de espera de la redirección en pago rechazado"
+msgstr "Redirection timeout on failure"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_redirect_success_timeout
 #, python-format
 msgid "Redirection timeout on success"
-msgstr "Tiempo de espera de la redirección en pago exitoso"
+msgstr "Redirection timeout on success"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #, python-format
 msgid "Redirection to shop in a few seconds..."
-msgstr "Redirección a la tienda en unos momentos..."
+msgstr "Redirection to shop in a few seconds..."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_return_mode
 #, python-format
 msgid "Return mode"
-msgstr "Modo de retorno"
+msgstr "Return mode"
 
 #. module: payment_payzen
 #: model:ir.model.fields.selection,name:payment_payzen.selection__payment_acquirer__payzen_sign_algo__sha-1
@@ -579,28 +578,28 @@ msgstr ""
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #, python-format
 msgid "See the transaction details for more information ({})."
-msgstr "Vea los detalles de la transacción para más información ({})."
+msgstr "See the transaction details for more information ({})."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_doc
 #, python-format
 msgid "Click to view the module configuration documentation"
-msgstr "Haga clic para ver la documentación de la configuración del módulo"
+msgstr "Click to view the module configuration documentation"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_site_id
 #, python-format
 msgid "Shop ID"
-msgstr "ID de tienda"
+msgstr "Shop ID"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_sign_algo
 #, python-format
 msgid "Signature algorithm"
-msgstr "Algoritmo de firma"
+msgstr "Signature algorithm"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -610,13 +609,14 @@ msgid ""
 "available in the PayZen Back Office, the feature will be available "
 "soon."
 msgstr ""
-"El algoritmo HMAC-SHA-256 no se debe activar si aún no está disponible en el"
-" Back Office PayZen, la función estará disponible pronto."
+"The HMAC-SHA-256 algorithm should not be activated if it is not yet "
+"available in the PayZen Back Office, the feature will be available "
+"soon."
 
 #. module: payment_payzen
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__provider
 msgid "The Payment Service Provider to use with this acquirer"
-msgstr ""
+msgstr "The Payment Service Provider to use with this acquirer"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -626,15 +626,15 @@ msgid ""
 "The card type(s) that can be used for the payment. Select none to use "
 "gateway configuration."
 msgstr ""
-"El tipo(s) de tarjeta que se puede usar para el pago. No haga ninguna "
-"selección para usar la configuración del portal."
+"The card type(s) that can be used for the payment. Select none to use "
+"gateway configuration."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,help:payment_payzen.field_payment_acquirer__payzen_site_id
 #, python-format
 msgid "The identifier provided by PayZen."
-msgstr "El identificador proporcionado por PayZen."
+msgstr "The identifier provided by PayZen."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -644,14 +644,14 @@ msgid ""
 "The number of days before the bank capture (adjustable in your PayZen "
 "Back Office)."
 msgstr ""
-"El número de días antes de la captura del pago (ajustable en su Back Office "
-"PayZen)."
+"The number of days before the bank capture (adjustable in your PayZen "
+"Back Office)."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #, python-format
 msgid "The shop currency {} is not supported."
-msgstr "La moneda de la tienda {} no es compatible."
+msgstr "The shop currency {} is not supported."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -661,8 +661,8 @@ msgid ""
 "Time in seconds (0-300) before the buyer is automatically redirected to your"
 " website after a declined payment."
 msgstr ""
-"Tiempo en segundos (0-300) antes de que el comprador sea redirigido "
-"automáticamente a su sitio web después de un pago rechazado."
+"Time in seconds (0-300) before the buyer is automatically redirected to your"
+" website after a declined payment."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -672,8 +672,8 @@ msgid ""
 "Time in seconds (0-300) before the buyer is automatically redirected to your"
 " website after a successful payment."
 msgstr ""
-"Tiempo en segundos (0-300) antes de que el comprador sea redirigido "
-"automáticamente a su sitio web después de un pago exitoso."
+"Time in seconds (0-300) before the buyer is automatically redirected to your"
+" website after a successful payment."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
@@ -681,14 +681,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:payment_payzen.transaction_form_payzen
 #, python-format
 msgid "Transaction log"
-msgstr "Registro de transacción"
+msgstr "Transaction log"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_transaction__payzen_trans_status
 #, python-format
 msgid "Transaction status"
-msgstr "Estado de la transacción"
+msgstr "Transaction status"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
@@ -698,21 +698,21 @@ msgid ""
 "URL to copy into your PayZen Back Office > Settings > Notification "
 "rules."
 msgstr ""
-"URL a copiar en el Back Office  PayZen > Configuración > Reglas de "
-"notificación."
+"URL to copy into your PayZen Back Office > Settings > Notification "
+"rules."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_acquirer.py:0
 #: model:ir.model.fields,field_description:payment_payzen.field_payment_acquirer__payzen_validation_mode
 #, python-format
 msgid "Validation mode"
-msgstr "Modo de validación"
+msgstr "Validation mode"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/models/payment_transaction.py:0
 #, python-format
 msgid "YES"
-msgstr "SÍ"
+msgstr "YES"
 
 #. module: payment_payzen
 #: model_terms:payment.acquirer,pre_msg:payment_payzen.payment_acquirer_payzen
@@ -721,83 +721,83 @@ msgid ""
 "You will be redirected to the PayZen website after clicking on the "
 "payment button."
 msgstr ""
-"Será redirigido al sitio web de PayZen después de hacer clic en el "
-"botón de pago."
+"You will be redirected to the PayZen website after clicking on the "
+"payment button."
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Chinese"
-msgstr "Chino"
+msgstr "Chinese"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "German"
-msgstr "Alemán"
+msgstr "German"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Spanish"
-msgstr "Español"
+msgstr "Spanish"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "English"
-msgstr "Inglés"
+msgstr "English"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "French"
-msgstr "Francés"
+msgstr "French"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Italian"
-msgstr "Italiano"
+msgstr "Italian"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Japanese"
-msgstr "Japonés"
+msgstr "Japanese"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Dutch"
-msgstr "Holandés"
+msgstr "Dutch"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Polish"
-msgstr "Polaco"
+msgstr "Polish"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Portuguese"
-msgstr "Portugués"
+msgstr "Portuguese"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Russian"
-msgstr "Ruso"
+msgstr "Russian"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Swedish"
-msgstr "Sueco"
+msgstr "Swedish"
 
 #. module: payment_payzen
 #: code:addons/payment_payzen/helpers/tools.py:0
 #, python-format
 msgid "Turkish"
-msgstr "Turco"
+msgstr "Turkish"

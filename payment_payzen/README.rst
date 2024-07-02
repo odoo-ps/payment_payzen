@@ -3,7 +3,7 @@
    :alt: License: AGPL v3
 
 ===================================================
-PayZen plugin for Odoo
+PayZen best plugin for Odoo
 ===================================================
 
 PayZen plugin for Odoo is an open source plugin that links Odoo based e-commerce websites to PayZen
@@ -31,24 +31,24 @@ can choose one of these instructions:
 
 In your Odoo administrator interface, browse to "Applications" tab, delete "Applications" filter from
 search field and search for "payzen" keyword. Click "Install" (or "Upgrade") button of the "PayZen
-Payment Acquirer" module.
+Payment Provider" module.
 
 Configuration
 =============
 
 * Go to "Website Admin" tab.
-* In "Configuration" section, expand "eCommerce" menu than click on "Payment Acquirers" entry.
+* In "Configuration" section, expand "eCommerce" menu than click on "Payment Providers" entry.
 * Click on button "Configure" of PayZen module.
 * You can now enter your PayZen credentials.
 
-Important
+IMPORTANT
 ---------
 * You should select a Payment Journal in the "Configuration" tab of the PayZen aquirer
   to start using this payment method.
 * If you have multiple Odoo databases on your server, do not forget to set dbfilter
   parameter in odoo.conf. *You must launch one database only per URL* because PayZen
   have to send back payment notification on the right database. Otherwise it will
-  failed with a 404 error.
+  fail with a 404 error.
 
 Author
 =======
@@ -61,5 +61,5 @@ License
 Each PayZen plugin source file included in this distribution is licensed under
 the Affero General Public License (AGPL 3.0).
 
-Please see LICENSE.txt for the full text of the AGPL 3.0 license. 
+Please see LICENSE.txt for the full text of the AGPL 3.0 license.
 It is also available through the world-wide-web at this URL: http://www.gnu.org/licenses/agpl.html.

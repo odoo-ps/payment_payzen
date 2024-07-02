@@ -1,35 +1,23 @@
-1.2.0, 2020-04-07
+4.0.0, 2024-05-30
 =============
-- Compatibility with Odoo 13 version.
-- [multi] Added payment in installments submodule.
+- New plugin for Odoo 17.
 
-1.1.1, 2019-12-16
+3.0.3, 2023-09-14
 =============
-- Bug fix: incorrect payment amount rounding.
+- Bug Fix: Fix client return to shop in case of multi-site.
+- Update list of supported payment means.
 
-1.1.0, 2019-06-17
+3.0.2, 2023-06-06
 =============
-- Compatibility with Odoo 11 and 12 versions.
-- Added Spanish translation.
-- Enable signature algorithm selection (SHA-1 or HMAC-SHA-256).
-- Added various configuration options.
-- Improve payment details dislay.
-- [technical] Manage enabled/disabled features by plugin variant.
+- Add documentation management field.
+- Minor code fixes.
 
-1.0.0, 2017-05-01
+3.0.1, 2023-03-29
 =============
-- Bug fix: authentication error on payment end when request contains accented characters.
-- Rename some module files to match Odoo standards.
-- Added shipping information in sent form.
-- Consider AUTHORISED_TO_VALIDATE transaction status as a pending status.
-- Added PayZen supported currencies.
-- Added license notices.
+- Bug fix: Fix arguments of the method _get_default_payment_method_id.
+- Update list of supported payment means.
+- Update list of supported currencies.
 
-0.9.1, 2017-05-01
+3.0.0, 2022-12-15
 =============
-- Bug fix: relative to generating transaction IDs.
-- Process return to shop and IPN calls.
-
-0.9.0, 2017-01-22
-=============
-- Initial PayZen payment module for Odoo 9 by Sudokeys.
+- New plugin for Odoo 16.

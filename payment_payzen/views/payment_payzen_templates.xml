@@ -9,17 +9,8 @@
 -->
 
 <odoo>
-        <template id="payzen_acquirer_button">
-            <t t-if="acquirer.payzen_odoo10">
-                 <form t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
-                 <![CDATA[<!-- ]]> <!-- Neutralize </form> tag. -->
-                    </form>
-                 <![CDATA[ --> ]]>
-            </t>
-            <t t-else="">
-              <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me="" />
-            </t>
-
+    <template id="payzen_provider_button">
+        <form t-att-action="api_url" method="post">
             <input type="hidden" name="vads_site_id" t-att-value="vads_site_id" />
             <input type="hidden" name="vads_amount" t-att-value="vads_amount" />
             <input type="hidden" name="vads_currency" t-att-value="vads_currency" />
@@ -33,6 +24,7 @@
             <input type="hidden" name="vads_version" t-att-value="vads_version" />
             <input type="hidden" name="vads_return_mode" t-att-value="vads_return_mode" />
             <input type="hidden" name="vads_order_id" t-att-value="vads_order_id" />
+            <input type="hidden" name="vads_ext_info_order_ref" t-att-value="vads_ext_info_order_ref" />
             <input type="hidden" name="vads_contrib" t-att-value="vads_contrib" />
             <input type="hidden" name="signature" t-att-value="payzen_signature" />
 
@@ -43,7 +35,7 @@
             <input type="hidden" name="vads_payment_cards" t-att-value="vads_payment_cards" />
             <input type="hidden" name="vads_threeds_mpi" t-att-value="vads_threeds_mpi" />
 
-            <t t-if="acquirer.payzen_redirect">
+            <t t-if="vads_redirect_success_timeout">
                 <input type="hidden" name="vads_redirect_success_timeout" t-att-value="vads_redirect_success_timeout" />
                 <input type="hidden" name="vads_redirect_success_message" t-att-value="vads_redirect_success_message" />
                 <input type="hidden" name="vads_redirect_error_timeout" t-att-value="vads_redirect_error_timeout" />
@@ -78,14 +70,8 @@
             <input type="hidden" name="vads_sub_currency" t-att-value="vads_sub_currency"/>
             <input type="hidden" name="vads_sub_init_amount_number" t-att-value="vads_sub_init_amount_number"/>
             <input type="hidden" name="vads_sub_init_amount" t-att-value="vads_sub_init_amount"/>
-            <!-- URLs. --> 
+            <!-- URLs. -->
             <input type="hidden" name="vads_url_return" t-att-value="vads_url_return" />
-
-            <t t-if="acquirer.payzen_odoo10">
-                <button type="submit" width="100px" t-att-class="submit_class">
-                     <span t-if="submit_txt"><t t-esc="submit_txt" /> <span class="fa fa-long-arrow-right" /></span>
-                 </button>
-                <![CDATA[</form>]]>
-            </t>
-        </template>
+        </form>
+    </template>
 </odoo>
