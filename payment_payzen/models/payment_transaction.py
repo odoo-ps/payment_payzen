@@ -78,7 +78,7 @@ class TransactionPayzen(models.Model):
             if not self.provider_id.support_recurring:
                 raise ValidationError(_("Payment transaction (%s) with sale order with recurring payment provider set, but provider does not support recurring payments: %s") % (self, self.provider_id))
 
-            values = self._payzen_set_recurring_values(values, self.sale_order_ids)
+            values = self._payzen_set_recurring_values(values, processing_values, sale_order=self.sale_order_ids)
 
         # Set shipping info.
         try:
@@ -117,10 +117,12 @@ class TransactionPayzen(models.Model):
         values['api_url'] = self.provider_id.payzen_get_form_action_url()
         return values
 
-    def _payzen_set_recurring_values(self, values, sale_order):
+    def _payzen_set_recurring_values(self, tx_values, processing_values, sale_order):
         sale_order.ensure_one()
 
-        currency = values.get('currency', self.env['res.currency'].browse(values['currency_id'])).exists()
+        currency = processing_values.get(
+            "currency", self.env["res.currency"].browse(processing_values.get("currency_id"))
+        ).exists()
 
         # FIXME: N.B. currently _compute_payments_amounts code in sale order will *always* set a first payment,
         #        always resulting here in an immediate payment
@@ -128,7 +130,7 @@ class TransactionPayzen(models.Model):
         first_payment_nonzero = bool(sale_order.recurring_first_payment_amount)
 
         first_date = sale_order.date_order.date()
-        second_date = (sale_order.recurring_second_payment_date or (first_date + relativedelta(months=+1)).date())
+        second_date = sale_order.recurring_second_payment_date or (first_date + relativedelta(months=+1))
 
         vads_sub_desc_values = {
             "RRULE:FREQ": "MONTHLY",
@@ -144,35 +146,45 @@ class TransactionPayzen(models.Model):
         # different amount for first N installments (used to recover rounding differences on 2nd payment)
         sub_init_vals = {}
         if sale_order.recurring_second_payment_amount != sale_order.recurring_payment_monthly_amount:
-            values.update({
-                'vads_sub_init_amount_number': '1',
-                'vads_sub_init_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount, currency))
-            })
+            sub_init_vals.update(
+                {
+                    "vads_sub_init_amount_number": "1",
+                    "vads_sub_init_amount": str(
+                        tools.amount_in_cents(sale_order.recurring_second_payment_amount, currency)
+                    ),
+                }
+            )
 
         # immediate first payment if non-zero
         if first_payment_nonzero:
-            values.update({
-                'vads_sub_desc': vads_sub_desc,
-                'vads_page_action': 'REGISTER_PAY_SUBSCRIBE',
-                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_first_payment_amount, currency)),
-                'vads_payment_config': 'SINGLE',
-                'vads_sub_amount': str(tools.amount_in_cents(sale_order.recurring_payment_monthly_amount, currency)),
-                'vads_sub_effect_date': second_date.strftime('%Y%m%d'),
-                'vads_capture_delay': str((first_date - date.today()).days),
-                **sub_init_vals,
-            })
+            tx_values.update(
+                {
+                    "vads_sub_desc": vads_sub_desc,
+                    "vads_page_action": "REGISTER_PAY_SUBSCRIBE",
+                    "vads_amount": str(tools.amount_in_cents(sale_order.recurring_first_payment_amount, currency)),
+                    "vads_payment_config": "SINGLE",
+                    "vads_sub_amount": str(
+                        tools.amount_in_cents(sale_order.recurring_payment_monthly_amount, currency)
+                    ),
+                    "vads_sub_effect_date": second_date.strftime("%Y%m%d"),
+                    "vads_capture_delay": str((first_date - date.today()).days),
+                    **sub_init_vals,
+                }
+            )
         else:
             assert sale_order.recurring_first_payment_amount == 0
-            values.update({
-                'vads_sub_desc': vads_sub_desc,
-                'vads_page_action': 'REGISTER_SUBSCRIBE',
-                'vads_amount': str(tools.amount_in_cents(sale_order.recurring_second_payment_amount, currency)),
-                'vads_sub_amount': str(tools.amount_in_cents(sale_order.payzen_payment_monthly_amount, currency)),
-                'vads_sub_effect_date': first_date.strftime('%Y%m%d'),
-                **sub_init_vals,
-            })
+            tx_values.update(
+                {
+                    "vads_sub_desc": vads_sub_desc,
+                    "vads_page_action": "REGISTER_SUBSCRIBE",
+                    "vads_amount": str(tools.amount_in_cents(sale_order.recurring_second_payment_amount, currency)),
+                    "vads_sub_amount": str(tools.amount_in_cents(sale_order.payzen_payment_monthly_amount, currency)),
+                    "vads_sub_effect_date": first_date.strftime("%Y%m%d"),
+                    **sub_init_vals,
+                }
+            )
 
-        return values
+        return tx_values
 
     def _payzen_get_tx_from_notification_data(self, notification_data):
         shasign, status, reference = notification_data.get('signature'), notification_data.get('vads_trans_status'), notification_data.get('vads_ext_info_order_ref') or notification_data.get('vads_order_id')
