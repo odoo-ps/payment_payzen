@@ -26,7 +26,7 @@
                     on
                     <t t-out="format_date(object.date_order)"/>
                 </t>
-                from<t t-out="object.company_id.name"/>.
+                from <t t-out="object.company_id.name"/>.
             </p>
 
             <p t-if="object.recurring_payment_months > 1">
