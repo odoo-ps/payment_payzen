@@ -194,7 +194,7 @@ class TransactionPayzen(models.Model):
             _logger.error(error_msg)
             raise ValidationError(error_msg)
 
-        tx = self.search([('reference', '=', reference)])
+        tx = self.search([('reference', '=', reference), ('provider_code', 'in', ('payzen', 'payzenmulti'))])
         if not tx or len(tx) > 1:
             error_msg = 'PayZen: received data for reference {}'.format(reference)
             if not tx:
@@ -216,14 +216,14 @@ class TransactionPayzen(models.Model):
 
     def _get_tx_from_notification_data(self, provider_code, notification_data):
         tx = super()._get_tx_from_notification_data(provider_code, notification_data)
-        if provider_code != 'payzen' and self.provider_code != 'payzenmulti':
+        if provider_code not in {"payzen", "payzenmulti"}:
             return tx
 
         return self._payzen_get_tx_from_notification_data(notification_data)
 
     def _process_notification_data(self, notification_data):
         super()._process_notification_data(notification_data)
-        if self.provider_code != 'payzen' and self.provider_code != 'payzenmulti':
+        if self.provider_code not in {"payzen", "payzenmulti"}:
             return
 
         self.provider_reference = notification_data.get('vads_ext_info_order_ref') or notification_data.get('vads_order_id')

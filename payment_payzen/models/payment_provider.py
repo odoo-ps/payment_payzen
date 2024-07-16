@@ -112,7 +112,7 @@ class ProviderPayzen(models.Model):
         currency = self.env['res.currency'].browse(currency_id).exists()
         if currency and currency.name and tools.find_currency(currency.name) is None:
             providers = providers.filtered(
-                lambda p: p.code not in ['payzen', 'payzenmulti']
+                lambda p: p.code not in {'payzen', 'payzenmulti'}
             )
 
         # if there's a specific provider set on SO for recurring payments, allow only that one
@@ -268,7 +268,7 @@ class ProviderPayzen(models.Model):
         return self.payzen_gateway_url
 
     def _get_default_payment_method_codes(self):
-        if self.code != 'payzen' and self.code != 'payzenmulti':
+        if self.code not in {"payzen", "payzenmulti"}:
             return super()._get_default_payment_method_codes()
 
         return self.code
@@ -284,7 +284,7 @@ class ProviderPayzen(models.Model):
     def _get_supported_currencies(self):
         """ Override of `payment` to return the supported currencies. """
         supported_currencies = super()._get_supported_currencies()
-        if self.code in ['payzen', 'payzenmulti']:
+        if self.code in {'payzen', 'payzenmulti'}:
             supported_currencies = supported_currencies.filtered(
                 lambda c: c.name in self.get_payzen_currencies()
             )
