@@ -36,8 +36,11 @@ class SaleOrder(models.Model):
                 first = order.recurring_first_payment_amount_manual
                 recurring_months -= 1
                 recurring_total -= order.recurring_first_payment_amount_manual
-            remainder = order.currency_id.round(recurring_total % recurring_months)
-            monthly = order.currency_id.round((recurring_total - remainder) / recurring_months)
+            if recurring_months:
+                remainder = order.currency_id.round(recurring_total % recurring_months)
+                monthly = order.currency_id.round((recurring_total - remainder) / recurring_months)
+            else:
+                remainder, monthly = 0.0, 0.0
             if first is None:
                 first = monthly + remainder
                 remainder = 0
