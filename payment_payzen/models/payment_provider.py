@@ -115,14 +115,14 @@ class ProviderPayzen(models.Model):
                 lambda p: p.code not in {'payzen', 'payzenmulti'}
             )
 
-        # if there's a specific provider set on SO for recurring payments, allow only that one
+        # if there's a specific provider set on SO for allowed payments, allow only that one
         if (
             sale_order_id
             and (sale_order := self.env['sale.order'].browse(sale_order_id).exists())
-            and sale_order.recurring_payment_provider_id
-            and sale_order.recurring_payment_provider_id in providers
+            and sale_order.allowed_payment_provider_id
+            and sale_order.allowed_payment_provider_id in providers
         ):
-            return sale_order.recurring_payment_provider_id.sudo()
+            return sale_order.allowed_payment_provider_id.sudo()
 
         return providers
 

@@ -249,9 +249,9 @@ msgid "Recurring Payment Months"
 msgstr "Mois de paiement récurrent"
 
 #. module: payment_payzen
-#: model:ir.model.fields,field_description:payment_payzen.field_sale_order__recurring_payment_provider_id
-msgid "Recurring Payment Provider"
-msgstr "Fournisseur de paiements récurrents"
+#: model:ir.model.fields,field_description:payment_payzen.field_sale_order__allowed_payment_provider_id
+msgid "Allowed Payment Provider"
+msgstr "Fournisseur de paiements autorisé"
 
 #. module: payment_payzen
 #: model:ir.model.fields,field_description:payment_payzen.field_sale_order__recurring_second_payment_amount

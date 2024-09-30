@@ -70,11 +70,14 @@ class TransactionPayzen(models.Model):
             'vads_cust_phone': self.partner_phone and self.partner_phone[0:31] or '',
         })
 
-        if self.sale_order_ids.recurring_payment_provider_id:
+        if (
+            self.sale_order_ids.allowed_payment_provider_id
+            and self.sale_order_ids.allowed_payment_provider_id.code == "payzenmulti"
+        ):
             if len(self.sale_order_ids) > 1:
                 raise ValidationError(_("Unsupported recurring payment transaction (%s) with multiple sale orders: %s") % (self, self.sale_order_ids))
-            if self.sale_order_ids.recurring_payment_provider_id != self.provider_id:
-                raise ValidationError(_("Recurring payment transaction (%s) provider doesn't match sale order provider: %s") % (self, self.sale_order_ids.recurring_payment_provider_id))
+            if self.sale_order_ids.allowed_payment_provider_id != self.provider_id:
+                raise ValidationError(_("Recurring payment transaction (%s) provider doesn't match sale order provider: %s") % (self, self.sale_order_ids.allowed_payment_provider_id))
             if not self.provider_id.support_recurring:
                 raise ValidationError(_("Payment transaction (%s) with sale order with recurring payment provider set, but provider does not support recurring payments: %s") % (self, self.provider_id))
 

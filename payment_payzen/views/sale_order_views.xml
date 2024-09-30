@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="recurring_payment_provider_id" domain="[('support_recurring', '=', True)]"/>
+                <field name="allowed_payment_provider_id"/>
                 <field name="recurring_first_payment_amount_manual"/>
                 <field name="recurring_second_payment_date"/>
             </xpath>
